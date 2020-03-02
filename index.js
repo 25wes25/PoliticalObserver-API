@@ -61,8 +61,8 @@ const SettingsModel = mongoose.model('setting', settingsSchema);
 // the 'use' method assigns a middleware
 app.use(bodyParser.json({ type: 'application/json' }));
 
-const hostname = '127.0.0.1';
-const port = 3000;
+//const hostname = '127.0.0.1';
+const port = process.env.PORT || 3000;
 
 // http status codes
 const statusOK = 200;
@@ -194,6 +194,6 @@ app.get("/settings/:id", async (request, response) => {
     }
 });
 
-app.listen(port, hostname, function () {
-    console.log(`Listening at http://${hostname}:${port}/...`);
+app.listen(port, function () {
+    console.log(`Listening at ${port}/...`);
 });
