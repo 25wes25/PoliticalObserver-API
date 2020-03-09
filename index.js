@@ -3,7 +3,7 @@ var bodyParser = require('body-parser');
 var app = express();
 
 const mongoose = require('mongoose');
-const url = 'mongodb+srv://Admin:admin@political-observer-cluster-mmirq.mongodb.net/test?retryWrites=true&w=majority';
+const url = 'mongodb://127.0.0.1:27017/myNewDB';
 
 //connect to MongoDB server
 mongoose.connect(url, { useNewUrlParser: true });
@@ -62,7 +62,8 @@ const SettingsModel = mongoose.model('setting', settingsSchema);
 app.use(bodyParser.json({ type: 'application/json' }));
 
 //const hostname = '127.0.0.1';
-const port = process.env.PORT || 3000;
+const hostname = '127.0.0.1';
+const port = 3000;
 
 // http status codes
 const statusOK = 200;
@@ -194,6 +195,6 @@ app.get("/settings/:id", async (request, response) => {
     }
 });
 
-app.listen(port, function () {
-    console.log(`Listening at ${port}/...`);
+app.listen(port, hostname, function () {
+    console.log(`Listening at http://${hostname}:${port}/...`);
 });
