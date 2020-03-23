@@ -50,11 +50,22 @@ const settingsSchema = new Schema({
     personalized: Boolean,
 });
 
-//compile schema to model with the name fruits (mongoose will make fruit -> fruits (plural))
+//issue schema
+const issueSchema = new Schema({
+  title: String,
+  description: String,
+  pros: String,
+  cons: String, 
+  notes: String,
+  date: String
+});
+
+//compile schema to model with the name '[name]' (mongoose will make a name -> names (plural): 'user' -> 'users' in DB)
 const UserModel = mongoose.model('user', userSchema);
 const DemographicModel = mongoose.model('demographic', demographicSchema);
 const PoliticianModel = mongoose.model('politician', politicianSchema);
 const SettingsModel = mongoose.model('setting', settingsSchema);
+const IssueModel = mongoose.model('issue', issueSchema);
 
 // bodyParser is a type of middleware
 // It helps convert JSON strings
@@ -193,6 +204,56 @@ app.get("/settings/:id", async (request, response) => {
     } catch (error) {
         response.status(500).send(error);
     }
+});
+//************************ ISSUES **********************************
+// GET all issues
+app.get('/issues/all/', async(req, res) => {
+	try {
+        var issues = await IssueModel.find().exec();
+		res.statusCode = statusOK;
+        res.send(issues);
+    } catch (error) {
+        response.status(500).send(error);
+    }
+});
+
+// GET (one) issue by issue id
+//5e78569646dbe4612048fb4b
+app.get('/issues/id/:id', async(req, res) => {
+	try {
+		var issue = await IssueModel.findById(req.params.id).exec();
+		res.statusCode = statusOK;
+		res.send(issue);
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
+
+// Handle POST request
+/*
+{
+  "title": "Tax Issue One",
+  "description": "Do you agree with tax reduction?",
+  "pros": "short term benefit for people",
+  "cons": "unpredictable long term influence", 
+  "notes": "read more",
+  "date": "3-9-2020"
+}
+*/
+app.post('/issues/', function(req, res) {
+	// get data from request
+	var newObject = req.body; // TODO validate data
+	
+	// add data to MongoDB database
+	const issue = new IssueModel(newObject);
+	issue.save(function (err, p) {
+	  if (err) return console.error(err);
+	  console.log(p.title + " saved to issues collection.");
+	});
+	
+	// send created item back with id included
+	res.statusCode = statusOK;
+	res.send(`Issue added`);
 });
 
 app.listen(port, hostname, function () {
