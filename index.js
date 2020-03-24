@@ -60,12 +60,21 @@ const issueSchema = new Schema({
   date: String
 });
 
-//compile schema to model with the name '[name]' (mongoose will make a name -> names (plural): 'user' -> 'users' in DB)
+//user-voted-issue schema -> usee-issue
+const userIssueSchema = new Schema({
+  issueId: String,
+  username: String,
+  vote: String,
+  date: String
+});
+
+//compile schema to model with the name '[name]' (mongoose will make [name] -> [names] (plural): 'user' -> 'users' in DB)
 const UserModel = mongoose.model('user', userSchema);
 const DemographicModel = mongoose.model('demographic', demographicSchema);
 const PoliticianModel = mongoose.model('politician', politicianSchema);
 const SettingsModel = mongoose.model('setting', settingsSchema);
 const IssueModel = mongoose.model('issue', issueSchema);
+const UserIssueModel = mongoose.model('user-issue', userIssueSchema);
 
 // bodyParser is a type of middleware
 // It helps convert JSON strings
@@ -254,6 +263,33 @@ app.post('/issues/', function(req, res) {
 	// send created item back with id included
 	res.statusCode = statusOK;
 	res.send(`Issue added`);
+});
+
+//************************ USER-VOTED_ISSUES **********************************
+
+// Handle POST request
+/*
+{
+  "issueId": "5e78569646dbe4612048fb4b",
+  "username": "myEmail@gmail.com",
+  "vote": "yes",
+  "date": "3-9-2020"
+}
+*/
+app.post('/userissues/', function(req, res) {
+	// get data from request
+	var newObject = req.body; // TODO validate data
+	
+	// add data to MongoDB database
+	const userIssue = new UserIssueModel(newObject);
+	userIssue.save(function (err, p) {
+	  if (err) return console.error(err);
+	  console.log("user vote on issue is saved to user-issues collection.");
+	});
+	
+	// send created item back with id included
+	res.statusCode = statusOK;
+	res.send(`user vote on issue added`);
 });
 
 app.listen(port, hostname, function () {
