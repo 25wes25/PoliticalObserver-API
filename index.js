@@ -267,6 +267,19 @@ app.post('/issues/', function(req, res) {
 
 //************************ USER-VOTED_ISSUES **********************************
 
+//get all issue that a user have voted on
+//username is user email
+app.get("/userissues/username/:email", async (request, response) => {
+    try {
+        var userIssues = await UserIssueModel.find({username: request.params.email}).exec();
+		response.statusCode = statusOK;
+        response.send(userIssues);
+    } catch (error) {
+        response.status(500).send(error);
+		console.log(error);
+    }
+});
+
 // Handle POST request
 /*
 {
