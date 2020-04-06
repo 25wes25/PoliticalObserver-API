@@ -289,20 +289,37 @@ app.get("/userissues/username/:email", async (request, response) => {
   "date": "3-9-2020"
 }
 */
-app.post('/userissues/', function(req, res) {
+app.post('/userissues/', async(req, res) => {
 	// get data from request
 	var newObject = req.body; // TODO validate data
-	
-	// add data to MongoDB database
-	const userIssue = new UserIssueModel(newObject);
-	userIssue.save(function (err, p) {
-	  if (err) return console.error(err);
-	  console.log("user vote on issue is saved to user-issues collection.");
-	});
-	
-	// send created item back with id included
-	res.statusCode = statusOK;
-	res.send(`user vote on issue added`);
+	console.log(req.body.username);
+	//check if issue exists
+	try{
+	    var userIssueFounded = await UserIssueModel.find({issueId: req.body.issueId, username: req.body.username}).exec();
+		console.log(userIssueFounded);
+		if(userIssueFounded.length == 0)
+		{
+			// add data to MongoDB database
+			const userIssue = new UserIssueModel(newObject);
+			userIssue.save(function (err, p) {
+			if (err) return console.error(err);
+			  console.log("user vote on issue is saved to user-issues collection.");
+		    });
+		
+			// send created item back with id included
+			res.statusCode = statusOK;
+			res.send(`0`);//new vote added
+		}
+		else {
+			console.log("user has already voted on this issue");
+			res.statusCode = statusOK;
+			res.send(`1`); //no vote added because already exists
+		}
+	}
+	catch(err) {
+		response.status(500).send(error);
+		console.log(error);
+	}
 });
 
 app.listen(port, hostname, function () {
