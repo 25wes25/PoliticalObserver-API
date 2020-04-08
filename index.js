@@ -215,16 +215,6 @@ app.get("/settings/:id", async (request, response) => {
     }
 });
 //************************ ISSUES **********************************
-// GET all issues
-app.get('/issues/all/', async(req, res) => {
-	try {
-        var issues = await IssueModel.find().exec();
-		res.statusCode = statusOK;
-        res.send(issues);
-    } catch (error) {
-        response.status(500).send(error);
-    }
-});
 
 // GET (one) issue by issue id
 //5e78569646dbe4612048fb4b
@@ -236,6 +226,35 @@ app.get('/issues/id/:id', async(req, res) => {
 	} catch (error) {
 		res.status(500).send(error);
 	}
+});
+
+//Get all issues filtered by a keyword (to get all -> keyword=all)
+app.get('/issues/filter/:keyword', async(req, res) => {
+	try {
+        var issues = await IssueModel.find().exec();
+		var filteredIssues = [];
+		var keyword = String(req.params.keyword).toLowerCase();
+		
+		if(keyword == 'all') {
+		    res.statusCode = statusOK;
+            res.send(issues);
+		}
+		else {
+			for(var i = 0; i<issues.length; i++)
+			{
+				var desc = String(issues[i].description).toLowerCase();
+				var title = String(issues[i].title).toLowerCase();
+				if(desc.includes(keyword) || title.includes(keyword))
+				{
+					filteredIssues.push(issues[i]);
+				}
+			}
+			res.statusCode = statusOK;
+			res.send(filteredIssues);
+		}
+    } catch (error) {
+        res.status(500).send(error);
+    }
 });
 
 // Handle POST request
@@ -271,7 +290,7 @@ app.post('/issues/', function(req, res) {
 //username is user email
 app.get("/userissues/username/:email", async (request, response) => {
     try {
-        var userIssues = await UserIssueModel.find({username: request.params.email}).exec();
+        var userIssues = await UserIssueModel.find({username: String(request.params.email).toLowerCase()}).exec();
 		response.statusCode = statusOK;
         response.send(userIssues);
     } catch (error) {
@@ -295,7 +314,7 @@ app.post('/userissues/', async(req, res) => {
 	console.log(req.body.username);
 	//check if issue exists
 	try{
-	    var userIssueFounded = await UserIssueModel.find({issueId: req.body.issueId, username: req.body.username}).exec();
+	    var userIssueFounded = await UserIssueModel.find({issueId: req.body.issueId, username: String(req.body.username).toLowerCase()}).exec();
 		console.log(userIssueFounded);
 		if(userIssueFounded.length == 0)
 		{
@@ -317,7 +336,7 @@ app.post('/userissues/', async(req, res) => {
 		}
 	}
 	catch(err) {
-		response.status(500).send(error);
+		res.status(500).send(error);
 		console.log(error);
 	}
 });
