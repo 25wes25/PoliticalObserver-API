@@ -1,6 +1,6 @@
-var express = require('express');
-var bodyParser = require('body-parser');
-var app = express();
+let express = require('express');
+let bodyParser = require('body-parser');
+let app = express();
 
 const mongoose = require('mongoose');
 // Local URL
@@ -74,7 +74,7 @@ const statusError = 500;
 // POST - Create User
 app.post('/users/', async (request, response) => {
     try {
-        var newObject = request.body;
+        let newObject = request.body;
 
         const demographic = new DemographicModel(newObject);
         await demographic.save(async (err, dbRes) => {
@@ -99,7 +99,7 @@ app.post('/users/', async (request, response) => {
 
 // PUT - Modify User
 app.put('/users/', function(req, res) {
-    var newObject = req.body;
+    let newObject = req.body;
 
     let query = {
         _id: mongoose.Types.ObjectId(newObject.id)
