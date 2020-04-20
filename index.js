@@ -4,9 +4,9 @@ let app = express();
 
 const mongoose = require('mongoose');
 // Local URL
-const url = 'mongodb://127.0.0.1:27017/PoliticalObserver';
+// const url = 'mongodb://127.0.0.1:27017/PoliticalObserver';
 // Development URL
-// const url = 'mongodb+srv://Admin:admin@political-observer-cluster-mmirq.mongodb.net/test?retryWrites=true&w=majority';
+const url = 'mongodb+srv://Admin:admin@political-observer-cluster-mmirq.mongodb.net/test?retryWrites=true&w=majority';
 
 // Connect to MongoDB server
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
