@@ -7,7 +7,7 @@ const DemographicModel = require('../models/demographic');
 router.post('/demographics', createDemographic);
 router.put('/demographics', modifyDemographic);
 router.get('/demographics', getAllDemographics);
-router.get('/demographics/:id', getDemographicById);
+router.get('/demographics/id/:id', getDemographicById);
 router.get('/demographics/gender', getGenderDemographics);
 
 // http status codes
@@ -56,8 +56,13 @@ async function getAllDemographics(request, response, next) {
 async function getDemographicById(request, response, next) {
     try {
         let demographic = await DemographicModel.find({_id: request.params.id}).exec();
-        response.statusCode = statusOK;
-        response.send(demographic);
+        if (demographic.length >= 1) {
+            response.statusCode = statusOK;
+            response.send(demographic[0]);
+        } else {
+            response.statusCode = statusError;
+            next("No demographic found for get demographic by id");
+        }
     } catch (e) {
         next(e);
     }
@@ -68,7 +73,9 @@ async function getGenderDemographics(request, response, next) {
         let demographics = await DemographicModel.find().exec();
         let results = [{x: 'Male', y: 0}, {x: 'Female', y: 0}, {x: 'Other', y: 0}];
         results.forEach(result => {
-            result.y = demographics.find(({demographic}) => demographic.gender === result.x);
+            result.y = demographics.reduce(function (n, demographic) {
+                return n + (demographic.gender === result.x);
+            }, 0);
         });
         response.statusCode = statusOK;
         response.send(results);

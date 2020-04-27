@@ -7,7 +7,7 @@ const SettingsModel = require('../models/settings');
 router.post('/settings', createSettings);
 router.put('/settings', modifySettings);
 router.get('/settings', getAllSettings);
-router.get('/settings/:id', getSettingsById);
+router.get('/settings/id/:id', getSettingsById);
 
 // http status codes
 const statusOK = 200;
@@ -57,8 +57,13 @@ async function getAllSettings(request, response, next) {
 async function getSettingsById(request, response, next) {
     try {
         let settings = await SettingsModel.find({_id: request.params.id}).exec();
-        response.statusCode = statusOK;
-        response.send(settings);
+        if (settings.length >= 1) {
+            response.statusCode = statusOK;
+            response.send(settings[0]);
+        } else {
+            response.statusCode = statusError;
+            next("No settings found for get settings by id");
+        }
     } catch (e) {
         next(e);
     }
