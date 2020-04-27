@@ -11,9 +11,9 @@ let settingsRouter = require('./src/routes/SettingsRouter');
 let politiciansRouter = require('./src/routes/PoliticiansRouter');
 
 // Local URL
-const url = 'mongodb://127.0.0.1:27017/PoliticalObserver';
+// const url = 'mongodb://127.0.0.1:27017/PoliticalObserver';
 // Development URL
-//const url = 'mongodb+srv://Admin:admin@political-observer-cluster-mmirq.mongodb.net/test?retryWrites=true&w=majority';
+const url = 'mongodb+srv://Admin:admin@political-observer-cluster-mmirq.mongodb.net/test?retryWrites=true&w=majority';
 
 // Connect to MongoDB server
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
@@ -27,7 +27,7 @@ db.on('error', err => {
 });
 
 const hostname = '127.0.0.1';
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 // http status codes
 const statusOK = 200;
@@ -43,11 +43,15 @@ app.use(demographicsRouter);
 app.use(settingsRouter);
 app.use(politiciansRouter);
 
+app.get('/', function (req, res) {
+    res.send("PoliticalObserver-API")
+});
+
 app.use(function(err, req, res) {
     res.send(err);
 });
 
-app.listen(port, hostname, function () {
-    console.log(`Listening at http://${hostname}:${port}/...`);
+app.listen(port, function () {
+    console.log(`Listening at ${port}/...`);
 });
 
