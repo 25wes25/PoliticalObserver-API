@@ -9,9 +9,9 @@ const SettingsModel = require('../models/settings');
 router.post('/users', createUser);
 router.put('/users', modifyUser);
 router.get('/users', getAllUsers);
-router.get('/users/:id', getUserById);
-router.get('/users/:email', getUserByEmail);
-router.delete('/users', deleteUser);
+router.get('/users/id/:id', getUserById);
+router.get('/users/email/:email', getUserByEmail);
+router.delete('/users/:id', deleteUser);
 
 // http status codes
 const statusOK = 200;
@@ -71,8 +71,13 @@ async function getAllUsers(request, response, next) {
 async function getUserById(request, response, next) {
     try {
         let user = await UserModel.find({_id: request.params.id}).exec();
-        response.statusCode = statusOK;
-        response.send(user);
+        if (user.length >= 1) {
+            response.statusCode = statusOK;
+            response.send(user[0]);
+        } else {
+            response.statusCode = statusError;
+            next("No user found for get user by id");
+        }
     } catch (e) {
         next(e);
     }
@@ -81,8 +86,13 @@ async function getUserById(request, response, next) {
 async function getUserByEmail(request, response, next) {
     try {
         let user = await UserModel.find({email: request.params.email}).exec();
-        response.statusCode = statusOK;
-        response.send(user);
+        if (user.length >= 1) {
+            response.statusCode = statusOK;
+            response.send(user[0]);
+        } else {
+            response.statusCode = statusError;
+            next("No user found for get user by email");
+        }
     } catch (e) {
         next(e);
     }

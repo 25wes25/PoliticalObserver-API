@@ -7,7 +7,7 @@ const PoliticianModel = require('../models/politician');
 router.post('/politicians', createPolitician);
 router.put('/politicians', modifyPolitician);
 router.get('/politicians', getAllPoliticians);
-router.get('/politicians/:id', getPoliticianById);
+router.get('/politicians/id/:id', getPoliticianById);
 
 // http status codes
 const statusOK = 200;
@@ -57,8 +57,13 @@ async function getAllPoliticians(request, response, next) {
 async function getPoliticianById(request, response, next) {
     try {
         let politician = await PoliticianModel.find({_id: request.params.id}).exec();
-        response.statusCode = statusOK;
-        response.send(politician);
+        if (politician.length >= 1) {
+            response.statusCode = statusOK;
+            response.send(politician[0]);
+        } else {
+            response.statusCode = statusError;
+            next("No politician found for get politician by id");
+        }
     } catch (e) {
         next(e);
     }
