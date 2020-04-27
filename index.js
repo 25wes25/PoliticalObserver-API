@@ -291,13 +291,61 @@ app.post('/issues/', function(req, res) {
 app.get("/userissues/username/:email", async (request, response) => {
     try {
         var userIssues = await UserIssueModel.find({username: String(request.params.email).toLowerCase()}).exec();
+		var votedIssuesAndStats = [];
+		for(var i = 0; i<userIssues.length; i++)
+			{
+				var issueId = String(userIssues[i].issueId);
+				var stats = await getStatsForOneIssue(issueId);
+				issueAndStats = {
+					issueId: userIssues[i].issueId,
+                    username: userIssues[i].username,
+                    vote: userIssues[i].vote,
+                    date: userIssues[i].date,
+					yes : stats.yes,
+			        no : stats.no,
+			        total : stats.total
+				}
+				//console.log(issueAndStats);
+				votedIssuesAndStats.push(issueAndStats);
+			}
 		response.statusCode = statusOK;
-        response.send(userIssues);
+        response.send(votedIssuesAndStats);
     } catch (error) {
         response.status(500).send(error);
 		console.log(error);
     }
 });
+
+//Helper function to Get stats for one issue
+async function getStatsForOneIssue(id) {
+    try {
+		var stats = {};
+        var userIssues = await UserIssueModel.find({issueId: id}).exec();
+		//going over each vote on the issue, to collect meaningfull data
+		var voteYes = 0;
+		var voteNo = 0;
+		//console.log(userIssues);
+		for(var i = 0; i<userIssues.length; i++)
+		{
+			//console.log("inside loop", userIssues[i].vote );
+            if(userIssues[i].vote == "yes")
+			    voteYes++;
+			else
+				voteNo++;
+		}	
+		var stats = 
+		{
+			yes : String(voteYes),
+			no : String(voteNo),
+			total : String(voteYes+voteNo)
+		}
+		return stats;
+    } catch (error) {
+        response.status(500).send(error);
+		console.log(error);
+		return stats;
+    }
+};
 
 // Handle POST request
 /*
