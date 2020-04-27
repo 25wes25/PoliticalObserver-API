@@ -295,11 +295,17 @@ app.get("/userissues/username/:email", async (request, response) => {
 		for(var i = 0; i<userIssues.length; i++)
 			{
 				var issueId = String(userIssues[i].issueId);
+				console.log('checking id:', issueId);
+				var issue = await IssueModel.findById(issueId).exec();
 				var stats = await getStatsForOneIssue(issueId);
 				issueAndStats = {
-					issueId: userIssues[i].issueId,
-                    username: userIssues[i].username,
+					id: userIssues[i].issueId,
+					username: userIssues[i].username,
                     vote: userIssues[i].vote,
+					title: issue.title,
+					description: issue.description,
+					pros: issue.pros,
+					cons: issue.cons,
                     date: userIssues[i].date,
 					yes : stats.yes,
 			        no : stats.no,
