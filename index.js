@@ -9,6 +9,8 @@ let usersRouter = require('./src/routes/UsersRouter');
 let demographicsRouter = require('./src/routes/DemographicsRouter');
 let settingsRouter = require('./src/routes/SettingsRouter');
 let politiciansRouter = require('./src/routes/PoliticiansRouter');
+let issuesRouter = require('./src/routes/IssuesRouter');
+let userissuesRouter = require('./src/routes/UserIssuesRouter');
 
 // Local URL
 const url = 'mongodb://127.0.0.1:27017/PoliticalObserver';
@@ -42,14 +44,17 @@ app.use(usersRouter);
 app.use(demographicsRouter);
 app.use(settingsRouter);
 app.use(politiciansRouter);
+app.use(issuesRouter);
+app.use(userissuesRouter);
 
 app.get('/', function (req, res) {
     res.send("PoliticalObserver-API")
 });
 
 app.use(function(err, req, res) {
-    res.send(err);
+    console.log(err);
 });
+
 
 app.listen(port, hostname, function () {
     console.log(`Listening at http://${hostname}:${port}/...`);
