@@ -2,29 +2,29 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 
-const SocialQuizModel = require('../models/socialQuiz');
+const EconQuizModel = require('../models/econQuiz');
 
-router.post('/socialQuiz', createSocialQuiz);
-router.get('/socialQuiz/userid/:userid', getSocialScoreByUserId);
+router.post('/econQuiz', createEconQuiz);
+router.get('/econQuiz/userid/:userid', getEconScoreByUserId);
 
 // http status codes
 const statusOK = 200;
 const statusNotFound = 404;
 const statusError = 500;
 
-async function createSocialQuiz(request, response, next) {
+async function createEconQuiz(request, response, next) {
     let data = request.body;
     try {
-        const socialQuiz = new SocialQuizModel(data);
-        let array = socialQuiz.socialAnswers;
+        const econQuiz = new EconQuizModel(data);
+        let array = econQuiz.econAnswers;
         let score = 0;
         let total = 0;
         for (let i = 0; i < array.length; i++){
             total = total + array[i];
         }
         score = total/array.length;
-        socialQuiz.socialScore = score;
-        socialQuiz.save(function (err, dbRes) {
+        econQuiz.econScore = score;
+        econQuiz.save(function (err, dbRes) {
             if (err) return console.error(err);
             response.statusCode = statusOK;
             response.send(dbRes);
@@ -34,15 +34,15 @@ async function createSocialQuiz(request, response, next) {
     }
 }
 
-async function getSocialScoreByUserId(request, response, next) {
+async function getEconScoreByUserId(request, response, next) {
     try {
-        let socialQuiz = await SocialQuizModel.find({userID: request.params.userid}).exec();
-        if (socialQuiz.length >= 1) {
+        let econQuiz = await EconQuizModel.find({userID: request.params.userid}).exec();
+        if (econQuiz.length >= 1) {
             response.statusCode = statusOK;
-            response.send(socialQuiz[0]);
+            response.send(econQuiz[0]);
         } else {
             response.statusCode = statusError;
-            next("No score found for get social quiz score by userID");
+            next("No score found for get econ quiz score by id");
         }
     } catch (e) {
         next(e);
