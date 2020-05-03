@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const SettingsModel = require('../models/settings');
 
 router.post('/settings', createSettings);
-router.put('/settings', modifySettings);
+router.put('/settings/:id', modifySettings);
 router.get('/settings', getAllSettings);
 router.get('/settings/id/:id', getSettingsById);
 
@@ -21,7 +21,7 @@ async function createSettings(request, response, next) {
         settings.save(function (err, dbRes) {
             if (err) return console.error(err);
             response.statusCode = statusOK;
-            response.send(dbRes);
+            response.send(new SettingsModel(dbRes));
         });
     } catch (e) {
         next(e);
@@ -29,15 +29,11 @@ async function createSettings(request, response, next) {
 }
 
 async function modifySettings(request, response, next) {
-    let data = request.body;
     try {
-        let query = {
-            _id: mongoose.Types.ObjectId(data.id)
-        };
-        SettingsModel.findOneAndUpdate(query, data, {new: true}, function (err, dbRes) {
+        SettingsModel.findOneAndUpdate({_id: request.params.id}, data, {new: true}, function (err, dbRes) {
             if (err) return console.error(err);
             response.statusCode = statusOK;
-            response.send(dbRes);
+            response.send(new SettingsModel(dbRes));
         });
     } catch (e) {
         next(e);

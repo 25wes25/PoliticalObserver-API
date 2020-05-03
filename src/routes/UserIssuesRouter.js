@@ -84,7 +84,7 @@ async function createUserIssue(request, response, next) {
             userIssue.save(function (error, dbRes) {
                 if (error) return console.error(error);
                 response.statusCode = statusOK;
-                response.send(dbRes);
+                response.send(new UserIssueModel(dbRes));
             });
         }
         else

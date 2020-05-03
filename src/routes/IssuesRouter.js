@@ -39,7 +39,7 @@ async function getIssues(request, response, next) {
                 }
             };
         }
-         response.statusCode = statusOK;
+        response.statusCode = statusOK;
         response.send(issues);
     } catch (error) {
         next(error);
@@ -84,7 +84,7 @@ async function createIssue(request, response, next) {
     issue.save(function (err, dbRes) {
         if (err) return console.error(err);
         response.statusCode = statusOK;
-        response.send(dbRes);
+        response.send(new IssueModel(dbRes));
     });
 
 }

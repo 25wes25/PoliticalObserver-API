@@ -7,7 +7,7 @@ const DemographicModel = require('../models/demographic');
 const SettingsModel = require('../models/settings');
 
 router.post('/users', createUser);
-router.put('/users', modifyUser);
+router.put('/users/:id', modifyUser);
 router.get('/users', getAllUsers);
 router.get('/users/id/:id', getUserById);
 router.get('/users/email/:email', getUserByEmail);
@@ -24,16 +24,18 @@ async function createUser(request, response, next) {
         const demographic = new DemographicModel(data);
         await demographic.save(async (err, dbRes) => {
             if (err) return console.error(err);
-            data.demographicId = dbRes._id.toString();
+            const demographicResult = new DemographicModel(dbRes);
+            data.demographicId = demographicResult.id;
             const settings = new SettingsModel(data);
             await settings.save(async (err, dbRes) => {
                 if (err) return console.error(err);
-                data.settingsId = dbRes._id.toString();
+                const settingsResult = new SettingsModel(dbRes);
+                data.settingsId = settingsResult.id;
                 const user = new UserModel(data);
                 await user.save(function (err, dbRes) {
                     if (err) console.error(err);
                     response.statusCode = statusOK;
-                    response.send(dbRes);
+                    response.send(new UserModel(dbRes));
                 });
             });
         });
@@ -45,13 +47,10 @@ async function createUser(request, response, next) {
 async function modifyUser(request, response, next) {
     let data = request.body;
     try {
-        let query = {
-            _id: mongoose.Types.ObjectId(data.id)
-        };
-        UserModel.findOneAndUpdate(query, data, {new: true}, function (err, dbRes) {
+        UserModel.findOneAndUpdate({_id: request.params.id}, data, {new: true}, function (err, dbRes) {
             if (err) return console.error(err);
             response.statusCode = statusOK;
-            response.send(dbRes);
+            response.send(new UserModel(dbRes));
         });
     } catch (e) {
         next(e);
@@ -73,7 +72,7 @@ async function getUserById(request, response, next) {
         let user = await UserModel.find({_id: request.params.id}).exec();
         if (user.length >= 1) {
             response.statusCode = statusOK;
-            response.send(user[0]);
+            response.send(new UserModel(user[0]));
         } else {
             response.statusCode = statusError;
             next("No user found for get user by id");
@@ -121,7 +120,7 @@ async function deleteUser(request, response, next) {
                     response.statusCode = statusOK;
                 });
                 response.statusCode = statusOK;
-                response.send(dbRes);
+                response.send(new UserModel(dbRes));
             } catch (error) {
                 response.status(statusError).send(error.message);
             }

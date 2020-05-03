@@ -2,12 +2,23 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-const userIssueSchema = new Schema({
-    issueId: String,
+var userIssueSchema = new Schema({
     userId: String,
+    issueId: String,
     vote: String,
     date: String
+},{
+    toJSON: {
+        getters: true,
+    },
 });
 
+userIssueSchema.set('toJSON', {
+    transform: function (doc, ret, options) {
+        ret.id = ret._id;
+        delete ret._id;
+        delete ret.__v;
+    }
+});
 
 module.exports = mongoose.model('user-issue', userIssueSchema);

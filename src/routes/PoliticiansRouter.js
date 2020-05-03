@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const PoliticianModel = require('../models/politician');
 
 router.post('/politicians', createPolitician);
-router.put('/politicians', modifyPolitician);
+router.put('/politicians/:id', modifyPolitician);
 router.get('/politicians', getAllPoliticians);
 router.get('/politicians/id/:id', getPoliticianById);
 
@@ -21,7 +21,7 @@ async function createPolitician(request, response, next) {
         politician.save(function (err, dbRes) {
             if (err) return console.error(err);
             response.statusCode = statusOK;
-            response.send(dbRes);
+            response.send(new PoliticianModel(dbRes));
         });
     } catch (e) {
         next(e);
@@ -29,15 +29,11 @@ async function createPolitician(request, response, next) {
 }
 
 async function modifyPolitician(request, response, next) {
-    let data = request.body;
     try {
-        let query = {
-            _id: mongoose.Types.ObjectId(data.id)
-        };
-        PoliticianModel.findOneAndUpdate(query, data, {new: true}, function (err, dbRes) {
+        PoliticianModel.findOneAndUpdate({_id: request.params.id}, data, {new: true}, function (err, dbRes) {
             if (err) return console.error(err);
             response.statusCode = statusOK;
-            response.send(dbRes);
+            response.send(new PoliticianModel(dbRes));
         });
     } catch (e) {
         next(e);

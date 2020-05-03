@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const DemographicModel = require('../models/demographic');
 
 router.post('/demographics', createDemographic);
-router.put('/demographics', modifyDemographic);
+router.put('/demographics/:id', modifyDemographic);
 router.get('/demographics', getAllDemographics);
 router.get('/demographics/id/:id', getDemographicById);
 router.get('/demographics/gender', getGenderDemographics);
@@ -21,7 +21,7 @@ async function createDemographic(request, response, next) {
         const demographic = new DemographicModel(data);
         demographic.save(function (err, dbRes) {
             response.statusCode = statusOK;
-            response.send(dbRes);
+            response.send(new DemographicModel(dbRes));
         });
     } catch (e) {
         next(e);
@@ -29,14 +29,11 @@ async function createDemographic(request, response, next) {
 }
 
 async function modifyDemographic(request, response, next) {
-    let data = request.body;
     try {
-        let query = {
-            _id: mongoose.Types.ObjectId(data.id)
-        };
-        DemographicModel.findOneAndUpdate(query, data, {new: true}, function (err, dbRes) {
+        DemographicModel.findOneAndUpdate({_id: request.params.id}, data, {new: true}, function (err, dbRes) {
+            if (err) return console.error(err);
             response.statusCode = statusOK;
-            response.send(dbRes);
+            response.send(new DemographicModel(dbRes));
         });
     } catch (e) {
         next(e);
