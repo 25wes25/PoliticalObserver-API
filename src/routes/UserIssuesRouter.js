@@ -4,9 +4,13 @@ const mongoose = require('mongoose');
 
 const IssueModel = require('../models/issue');
 const UserIssueModel = require('../models/userissue');
+const DemographicModel = require('../models/demographic');
+const IssueDataModel = require('../models/issueData');
+const UserModel = require('../models/user');
 
 router.get('/userissues/userid/:userid', getUserIssueByUserId);
 router.post('/userissues/', createUserIssue);
+
 
 // http status codes
 const statusOK = 200;
@@ -81,13 +85,31 @@ async function createUserIssue(request, response, next) {
         {
             // add data to MongoDB database
             const userIssue = new UserIssueModel(newObject);
-            userIssue.save(function (error, dbRes) {
+            userIssue.save(async (error, dbRes) => {
                 if (error) return console.error(error);
+                //find and update the existing issueData accordingly
+                let issueDataRes = await IssueDataModel.find({issueId: userIssue.issueId}).exec();
+                let issueData = issueDataRes[0];
+                //console.log(issueData);
+                let user = await UserModel.findById(userIssue.userId).exec();
+                //console.log(user);
+                let demographic = await DemographicModel.findById(user.demographicId).exec();
+                //console.log(demographic);
+                let gender = String(demographic.gender).toLowerCase();
+                if(String(userIssue.vote).toLowerCase()==='yes')
+                {
+                    gender == 'male'?issueData.yes.gender.Male+=1:(gender == 'female'?issueData.yes.gender.Female+=1:(issueData.yes.gender.Other+=1));
+                } else {
+                    gender == 'male'?issueData.no.gender.Male+=1:(gender == 'female'?issueData.no.gender.Female+=1:(issueData.no.gender.Other+=1));
+                }
+                //console.log(issueData);
+                await IssueDataModel.findOneAndUpdate({issueId: userIssue.issueId}, {yes: issueData.yes, no:issueData.no}).exec();
+
                 response.statusCode = statusOK;
                 response.send(new UserIssueModel(dbRes));
             });
         }
-        else
+        else //if user has voted before on the issue, do nothing
             response.send(null);
     }
     catch(error) {

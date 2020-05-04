@@ -13,6 +13,7 @@ let issuesRouter = require('./src/routes/IssuesRouter');
 let userissuesRouter = require('./src/routes/UserIssuesRouter');
 let socialQuizRouter = require('./src/routes/SocialQuizRouter');
 let econQuizRouter = require('./src/routes/EconQuizRouter');
+let issueDataRouter = require('./src/routes/IssueDataRouter');
 
 // Local URL
 const url = 'mongodb://127.0.0.1:27017/PoliticalObserver';
@@ -50,6 +51,7 @@ app.use(issuesRouter);
 app.use(userissuesRouter);
 app.use(socialQuizRouter);
 app.use(econQuizRouter);
+app.use(issueDataRouter);
 
 app.get('/', function (req, res) {
     res.send("PoliticalObserver-API")

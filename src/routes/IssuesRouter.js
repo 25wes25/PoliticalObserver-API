@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 
 const IssueModel = require('../models/issue');
 const UserIssueModel = require('../models/userissue');
+const IssueDataModel = require('../models/issueData');
 
 router.get('/issues/id/:id', getIssueById);
 router.get('/issues/:userid', getIssues);
@@ -14,6 +15,7 @@ router.post('/issues/', createIssue);
 const statusOK = 200;
 const statusNotFound = 404;
 const statusError = 500;
+
 
 // GET (one) issue by issue id
 async function getIssueById(request, response, next) {
@@ -81,10 +83,23 @@ async function getIssueByKeyword(request, response, next) {
 async function createIssue(request, response, next) {
     let body = request.body;
     const issue = new IssueModel(body);
-    issue.save(function (err, dbRes) {
+    issue.save(async (err, dbRes) => {
         if (err) return console.error(err);
         response.statusCode = statusOK;
         response.send(new IssueModel(dbRes));
+        let data = {
+                issueId: new IssueModel(dbRes).id,
+                yes: {
+                    gender:{Male: 0, Female: 0, Other: 0}
+                },
+                no:{
+                    gender:{Male: 0, Female: 0, Other: 0}
+                }
+            }
+        let issueData = new IssueDataModel(data);
+        await issueData.save(function (err, dbRes) {
+            if (err) console.error(err);
+        });
     });
 
 }
