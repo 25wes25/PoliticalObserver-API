@@ -7,6 +7,7 @@ const IssueDataModel = require('../models/issueData');
 router.get('/issuedata/gender/issueid/:issueid', getIssueDataGenderByIssueId);
 router.get('/issuedata/party/issueid/:issueid', getIssueDataPartyByIssueId);
 router.get('/issuedata/education/issueid/:issueid', getIssueDataEducationByIssueId);
+router.get('/issuedata/ethnicity/issueid/:issueid', getIssueDataEthnicityByIssueId);
 
 // http status codes
 const statusOK = 200;
@@ -18,6 +19,8 @@ const partyKeys = ['Democrat', 'Republican', 'Libertarian', 'Green', 'Constituti
 const partyValues = ['democrat', 'republican', 'libertarian', 'green', 'constitution', 'unaligned'];
 const educationKeys = ['None', 'Diploma', 'Associates', 'Bachelors', 'Masters', 'Doctoral'];
 const educationValues = ['none', 'diploma', 'associates', 'bachelors', 'masters', 'doctoral'];
+const ethnicityKeys = ['White', 'AfricanAmerican', 'Asian', 'NativeAmerican', 'Hispanic', 'Other'];
+const ethnicityValues = ['white', 'african american', 'asian', 'native american', 'hispanic', 'other'];
 
 async function getIssueDataGenderByIssueId(request, response, next) {
     try {
@@ -72,6 +75,27 @@ async function getIssueDataEducationByIssueId(request, response, next) {
             for(let i = 0; i<educationKeys.length; i++)
                 educationConcat.push({x:educationValues[i], y: issueData.yes.education[educationKeys[i]]});
             issueDataGraphFormat = {education:educationConcat};
+        }
+        response.statusCode = statusOK;
+        response.send(issueDataGraphFormat);
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function getIssueDataEthnicityByIssueId(request, response, next) {
+    try {
+        let issueDataRes = await IssueDataModel.find({issueId: String(request.params.issueid).toLowerCase()}).exec();
+        console.log(issueDataRes);
+        let issueDataGraphFormat = {};
+        if(issueDataRes.length>0) {
+            let issueData = issueDataRes[0];
+            let ethnicityConcat = [];
+            for(let i = 0; i<ethnicityKeys.length; i++)
+                ethnicityConcat.push({x:ethnicityValues[i], y: issueData.no.ethnicity[ethnicityKeys[i]]});
+            for(let i = 0; i<ethnicityKeys.length; i++)
+                ethnicityConcat.push({x:ethnicityValues[i], y: issueData.yes.ethnicity[ethnicityKeys[i]]});
+            issueDataGraphFormat = {ethnicity:ethnicityConcat};
         }
         response.statusCode = statusOK;
         response.send(issueDataGraphFormat);
