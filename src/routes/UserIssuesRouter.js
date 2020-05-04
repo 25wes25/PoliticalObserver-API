@@ -98,11 +98,8 @@ async function createUserIssue(request, response, next) {
                 //find and update the existing issueData accordingly
                 let issueDataRes = await IssueDataModel.find({issueId: userIssue.issueId}).exec();
                 let issueData = issueDataRes[0];
-                //console.log(issueData);
                 let user = await UserModel.findById(userIssue.userId).exec();
-                //console.log(user);
                 let demographic = await DemographicModel.findById(user.demographicId).exec();
-                //console.log(demographic);
                 let gender = String(demographic.gender).toLowerCase();
                 let party = String(demographic.partyAffiliation).toLowerCase();
                 let education = String(demographic.education).toLowerCase();
@@ -151,7 +148,6 @@ async function createUserIssue(request, response, next) {
                             break;}
                     }
                 }
-                //console.log(issueData);
                 await IssueDataModel.findOneAndUpdate({issueId: userIssue.issueId}, {yes: issueData.yes, no:issueData.no}).exec();
 
                 response.statusCode = statusOK;

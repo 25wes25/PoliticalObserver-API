@@ -15,8 +15,7 @@ const statusError = 500;
 async function getIssueDataGenderByIssueId(request, response, next) {
     try {
         let issueDataRes = await IssueDataModel.find({issueId: String(request.params.issueid).toLowerCase()}).exec();
-        //console.log(issueDataRes);
-        let issueDataGraphFormat = {}
+        let issueDataGraphFormat = {};
         if(issueDataRes.length>0) {
             let issueData = issueDataRes[0];
             let genderYes = issueData.yes.gender;
