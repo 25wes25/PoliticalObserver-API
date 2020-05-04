@@ -52,7 +52,7 @@ async function getIssueDataPartyByIssueId(request, response, next) {
             for(let i = 0; i<partyKeys.length; i++)
                 partyConcat.push({x:partyValues[i], y: issueData.no.party[partyKeys[i]]});
             for(let i = 0; i<partyKeys.length; i++)
-                partyConcat.push({x:educationValues[i], y: issueData.yes.party[partyKeys[i]]});
+                partyConcat.push({x:partyValues[i], y: issueData.yes.party[partyKeys[i]]});
             issueDataGraphFormat = {party:partyConcat};
         }
         response.statusCode = statusOK;
