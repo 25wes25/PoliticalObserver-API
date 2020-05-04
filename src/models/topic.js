@@ -2,20 +2,19 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-var politicianSchema = new Schema({
-    name: String,
-    position: String,
-    party: String,
-    state: String,
-    dateOfBirth: Date,
-    bio: String,
+var topicSchema = new Schema({
+    title: String,
+    category: String,
+    subCategory: String,
+    description: String,
+    body: String,
 },{
     toJSON: {
         getters: true,
     },
 });
 
-politicianSchema.set('toJSON', {
+topicSchema.set('toJSON', {
     transform: function (doc, ret, options) {
         ret.id = ret._id;
         delete ret._id;
@@ -23,4 +22,4 @@ politicianSchema.set('toJSON', {
     }
 });
 
-module.exports = mongoose.model('politician', politicianSchema);
+module.exports = mongoose.model('topic', topicSchema);
