@@ -4,7 +4,10 @@ const Schema = mongoose.Schema;
 
 var topicSchema = new Schema({
     title: String,
+    category: String,
+    subCategory: String,
     description: String,
+    body: String,
 },{
     toJSON: {
         getters: true,
