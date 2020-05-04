@@ -5,10 +5,12 @@ const Schema = mongoose.Schema;
 var issueDataSchema = new Schema({
     issueId: String,
     yes: {
-        gender:{Male: Number, Female: Number, Other: Number}
+        gender: {Male: Number, Female: Number, Other: Number},
+        party:{Democrat: Number, Republican: Number, Libertarian: Number, Green: Number, Constitution: Number, Unaligned:Number}
     },
     no:{
-        gender:{Male: Number, Female: Number, Other: Number}
+        gender:{Male: Number, Female: Number, Other: Number},
+        party:{Democrat: Number, Republican: Number, Libertarian: Number, Green: Number, Constitution: Number, Unaligned:Number}
     }
 },{
     toJSON: {

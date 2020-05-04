@@ -90,10 +90,12 @@ async function createIssue(request, response, next) {
         let data = {
                 issueId: new IssueModel(dbRes).id,
                 yes: {
-                    gender:{Male: 0, Female: 0, Other: 0}
+                    gender:{Male: 0, Female: 0, Other: 0},
+                    party:{Democrat: 0, Republican: 0, Libertarian: 0, Green: 0, Constitution: 0, Unaligned:0}
                 },
                 no:{
-                    gender:{Male: 0, Female: 0, Other: 0}
+                    gender:{Male: 0, Female: 0, Other: 0},
+                    party:{Democrat: 0, Republican: 0, Libertarian: 0, Green: 0, Constitution: 0, Unaligned:0}
                 }
             }
         let issueData = new IssueDataModel(data);

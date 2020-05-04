@@ -96,11 +96,18 @@ async function createUserIssue(request, response, next) {
                 let demographic = await DemographicModel.findById(user.demographicId).exec();
                 //console.log(demographic);
                 let gender = String(demographic.gender).toLowerCase();
+                let party = String(demographic.partyAffiliation).toLowerCase();
                 if(String(userIssue.vote).toLowerCase()==='yes')
                 {
                     gender == 'male'?issueData.yes.gender.Male+=1:(gender == 'female'?issueData.yes.gender.Female+=1:(issueData.yes.gender.Other+=1));
+                    party == 'democrat'?issueData.yes.party.Democrat+=1:(party == 'republican'?issueData.yes.party.Republican+=1:
+                        (party == 'libertarian'?issueData.yes.party.Libertarian+=1:(party == 'green'?issueData.yes.party.Green+=1:
+                            (party == 'constitution'?issueData.yes.party.Constitution+=1:(issueData.yes.party.Unaligned+=1)))));
                 } else {
                     gender == 'male'?issueData.no.gender.Male+=1:(gender == 'female'?issueData.no.gender.Female+=1:(issueData.no.gender.Other+=1));
+                    party == 'democrat'?issueData.no.party.Democrat+=1:(party == 'republican'?issueData.no.party.Republican+=1:
+                        (party == 'libertarian'?issueData.no.party.Libertarian+=1:(party == 'green'?issueData.no.party.Green+=1:
+                            (party == 'constitution'?issueData.no.party.Constitution+=1:(issueData.no.party.Unaligned+=1)))));
                 }
                 //console.log(issueData);
                 await IssueDataModel.findOneAndUpdate({issueId: userIssue.issueId}, {yes: issueData.yes, no:issueData.no}).exec();
