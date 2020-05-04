@@ -16,6 +16,14 @@ router.post('/userissues/', createUserIssue);
 const statusOK = 200;
 const statusNotFound = 404;
 const statusError = 500;
+const genderKeys = ['Male', 'Female', 'Other'];
+const genderValues = ['male', 'female', 'other'];
+const partyKeys = ['Democrat', 'Republican', 'Libertarian', 'Green', 'Constitution', 'Unaligned'];
+const partyValues = ['democrat', 'republican', 'libertarian', 'green', 'constitution', 'unaligned'];
+const educationKeys = ['None', 'Diploma', 'Associates', 'Bachelors', 'Masters', 'Doctoral'];
+const educationValues = ['none', 'diploma', 'associates', 'bachelors', 'masters', 'doctoral'];
+const ethnicityKeys = ['White', 'AfricanAmerican', 'Asian', 'NativeAmerican', 'Hispanic', 'Other'];
+const ethnicityValues = ['white', 'african american', 'asian', 'native american', 'hispanic', 'other'];
 
 //get all issue that a user have voted on
 async function getUserIssueByUserId(request, response, next) {
@@ -97,17 +105,51 @@ async function createUserIssue(request, response, next) {
                 //console.log(demographic);
                 let gender = String(demographic.gender).toLowerCase();
                 let party = String(demographic.partyAffiliation).toLowerCase();
+                let education = String(demographic.education).toLowerCase();
+                let ethnicity = String(demographic.ethnicity).toLowerCase();
                 if(String(userIssue.vote).toLowerCase()==='yes')
                 {
-                    gender == 'male'?issueData.yes.gender.Male+=1:(gender == 'female'?issueData.yes.gender.Female+=1:(issueData.yes.gender.Other+=1));
-                    party == 'democrat'?issueData.yes.party.Democrat+=1:(party == 'republican'?issueData.yes.party.Republican+=1:
-                        (party == 'libertarian'?issueData.yes.party.Libertarian+=1:(party == 'green'?issueData.yes.party.Green+=1:
-                            (party == 'constitution'?issueData.yes.party.Constitution+=1:(issueData.yes.party.Unaligned+=1)))));
+                    for(let i = 0; i<genderKeys.length; i++) {
+                        if(gender===genderValues[i]) {
+                            issueData.yes.gender[genderKeys[i]]+=1
+                            break;}
+                    }
+                    for(let i = 0; i<partyKeys.length; i++) {
+                        if(party===partyValues[i]) {
+                            issueData.yes.party[partyKeys[i]]+=1
+                            break;}
+                    }
+                    for(let i = 0; i<educationKeys.length; i++) {
+                        if(education===educationValues[i]) {
+                            issueData.yes.education[educationKeys[i]]+=1
+                            break;}
+                    }
+                    for(let i = 0; i<ethnicityKeys.length; i++) {
+                        if(ethnicity===ethnicityValues[i]) {
+                            issueData.yes.ethnicity[ethnicityKeys[i]]+=1
+                            break;}
+                    }
                 } else {
-                    gender == 'male'?issueData.no.gender.Male+=1:(gender == 'female'?issueData.no.gender.Female+=1:(issueData.no.gender.Other+=1));
-                    party == 'democrat'?issueData.no.party.Democrat+=1:(party == 'republican'?issueData.no.party.Republican+=1:
-                        (party == 'libertarian'?issueData.no.party.Libertarian+=1:(party == 'green'?issueData.no.party.Green+=1:
-                            (party == 'constitution'?issueData.no.party.Constitution+=1:(issueData.no.party.Unaligned+=1)))));
+                    for(let i = 0; i<genderKeys.length; i++) {
+                        if(gender===genderValues[i]) {
+                            issueData.no.gender[genderKeys[i]]+=1
+                            break;}
+                    }
+                    for(let i = 0; i<partyKeys.length; i++) {
+                        if(party===partyValues[i]) {
+                            issueData.no.party[partyKeys[i]]+=1
+                            break;}
+                    }
+                    for(let i = 0; i<educationKeys.length; i++) {
+                        if(education===educationValues[i]) {
+                            issueData.no.education[educationKeys[i]]+=1
+                            break;}
+                    }
+                    for(let i = 0; i<ethnicityKeys.length; i++) {
+                        if(ethnicity===ethnicityValues[i]) {
+                            issueData.no.ethnicity[ethnicityKeys[i]]+=1
+                            break;}
+                    }
                 }
                 //console.log(issueData);
                 await IssueDataModel.findOneAndUpdate({issueId: userIssue.issueId}, {yes: issueData.yes, no:issueData.no}).exec();
