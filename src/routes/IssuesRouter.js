@@ -6,6 +6,7 @@ const IssueModel = require('../models/issue');
 const UserIssueModel = require('../models/userissue');
 const IssueDataModel = require('../models/issueData');
 
+router.get('/issues', getAllIssues);
 router.get('/issues/id/:id', getIssueById);
 router.get('/issues/:userid', getIssues);
 router.get('/issues/filter/:userid/:keyword', getIssueByKeyword);
@@ -25,6 +26,16 @@ async function getIssueById(request, response, next) {
         response.send(issue);
     } catch (error) {
         next(error);
+    }
+}
+
+async function getAllIssues(request, response, next) {
+    try {
+        let issues = await IssueModel.find().exec();
+        response.statusCode = statusOK;
+        response.send(issues);
+    } catch (e) {
+        next(e);
     }
 }
 
