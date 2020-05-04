@@ -4,6 +4,10 @@ const Schema = mongoose.Schema;
 
 var politicianSchema = new Schema({
     name: String,
+    position: String,
+    party: String,
+    state: String,
+    dateOfBirth: Date,
     bio: String,
 },{
     toJSON: {
