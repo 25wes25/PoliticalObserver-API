@@ -67,7 +67,7 @@ async function getStatsForOneIssue(id) {
         let voteNo = 0;
         for(let i = 0; i<userIssues.length; i++)
         {
-            if(userIssues[i].vote == "yes")
+            if(userIssues[i].vote === "yes")
                 voteYes++;
             else
                 voteNo++;
@@ -89,7 +89,7 @@ async function createUserIssue(request, response, next) {
     try{
         //check if issue exists
         let userIssueFounded = await UserIssueModel.find({issueId: request.body.issueId, userId: String(request.body.userId).toLowerCase()}).exec();
-        if(userIssueFounded.length == 0)
+        if(userIssueFounded.length === 0)
         {
             // add data to MongoDB database
             const userIssue = new UserIssueModel(newObject);
