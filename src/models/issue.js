@@ -8,7 +8,7 @@ var issueSchema = new Schema({
     pros: String,
     cons: String,
     notes: String,
-    date: String
+    date: Date,
 },{
     toJSON: {
         getters: true,

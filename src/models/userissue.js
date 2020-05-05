@@ -6,7 +6,7 @@ var userIssueSchema = new Schema({
     userId: String,
     issueId: String,
     vote: String,
-    date: String
+    date: Date,
 },{
     toJSON: {
         getters: true,
