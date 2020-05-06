@@ -2,17 +2,19 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-var socialQuizSchema = new Schema({
+var QuizSchema = new Schema({
     userID: String,
     socialAnswers: [Number],
     socialScore: Number,
+    econAnswers: [Number],
+    econScore: Number,
 },{
     toJSON: {
         getters: true,
     },
 });
 
-socialQuizSchema.set('toJSON', {
+QuizSchema.set('toJSON', {
     transform: function (doc, ret, options) {
         ret.id = ret._id;
         delete ret._id;
@@ -20,4 +22,4 @@ socialQuizSchema.set('toJSON', {
     }
 });
 
-module.exports = mongoose.model('socialQuiz', socialQuizSchema);
+module.exports = mongoose.model('Quiz', QuizSchema);
