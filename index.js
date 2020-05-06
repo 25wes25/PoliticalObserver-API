@@ -10,7 +10,9 @@ let demographicsRouter = require('./src/routes/DemographicsRouter');
 let settingsRouter = require('./src/routes/SettingsRouter');
 let politiciansRouter = require('./src/routes/PoliticiansRouter');
 let issuesRouter = require('./src/routes/IssuesRouter');
+let topicsRouter = require('./src/routes/TopicsRouter');
 let userissuesRouter = require('./src/routes/UserIssuesRouter');
+let issueDataRouter = require('./src/routes/IssueDataRouter');
 let QuizRouter = require('./src/routes/QuizRouter');
 
 // Local URL
@@ -46,7 +48,9 @@ app.use(demographicsRouter);
 app.use(settingsRouter);
 app.use(politiciansRouter);
 app.use(issuesRouter);
+app.use(topicsRouter);
 app.use(userissuesRouter);
+app.use(issueDataRouter);
 app.use(QuizRouter);
 
 app.get('/', function (req, res) {

@@ -4,7 +4,9 @@ const mongoose = require('mongoose');
 
 const IssueModel = require('../models/issue');
 const UserIssueModel = require('../models/userissue');
+const IssueDataModel = require('../models/issueData');
 
+router.get('/issues', getAllIssues);
 router.get('/issues/id/:id', getIssueById);
 router.get('/issues/:userid', getIssues);
 router.get('/issues/filter/:userid/:keyword', getIssueByKeyword);
@@ -15,6 +17,7 @@ const statusOK = 200;
 const statusNotFound = 404;
 const statusError = 500;
 
+
 // GET (one) issue by issue id
 async function getIssueById(request, response, next) {
     try {
@@ -23,6 +26,16 @@ async function getIssueById(request, response, next) {
         response.send(issue);
     } catch (error) {
         next(error);
+    }
+}
+
+async function getAllIssues(request, response, next) {
+    try {
+        let issues = await IssueModel.find().exec();
+        response.statusCode = statusOK;
+        response.send(issues);
+    } catch (e) {
+        next(e);
     }
 }
 
@@ -81,10 +94,30 @@ async function getIssueByKeyword(request, response, next) {
 async function createIssue(request, response, next) {
     let body = request.body;
     const issue = new IssueModel(body);
-    issue.save(function (err, dbRes) {
+    issue.save(async (err, dbRes) => {
         if (err) return console.error(err);
         response.statusCode = statusOK;
         response.send(new IssueModel(dbRes));
+        let data = {
+                issueId: new IssueModel(dbRes).id,
+                yes: {
+                    gender:{Male: 0, Female: 0, Other: 0},
+                    party:{Democrat: 0, Republican: 0, Libertarian: 0, Green: 0, Constitution: 0, Unaligned:0},
+                    education:{None: 0, Diploma: 0, Associates: 0, Bachelors: 0, Masters: 0, Doctoral:0},
+                    ethnicity:{White: 0, AfricanAmerican: 0, Asian: 0, NativeAmerican: 0, Hispanic: 0, Other:0}
+
+                },
+                no:{
+                    gender:{Male: 0, Female: 0, Other: 0},
+                    party:{Democrat: 0, Republican: 0, Libertarian: 0, Green: 0, Constitution: 0, Unaligned:0},
+                    education:{None: 0, Diploma: 0, Associates: 0, Bachelors: 0, Masters: 0, Doctoral:0},
+                    ethnicity:{White: 0, AfricanAmerican: 0, Asian: 0, NativeAmerican: 0, Hispanic: 0, Other:0}
+                }
+            }
+        let issueData = new IssueDataModel(data);
+        await issueData.save(function (err, dbRes) {
+            if (err) console.error(err);
+        });
     });
 
 }
