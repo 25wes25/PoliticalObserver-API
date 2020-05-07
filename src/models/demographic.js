@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 var demographicSchema = new Schema({
-    ageRange: String,
+    age: Number,
     gender: String,
     ethnicity: String,
     maritalStatus: String,

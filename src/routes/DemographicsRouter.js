@@ -29,6 +29,7 @@ async function createDemographic(request, response, next) {
 }
 
 async function modifyDemographic(request, response, next) {
+    let data = request.body;
     try {
         DemographicModel.findOneAndUpdate({_id: request.params.id}, data, {new: true}, function (err, dbRes) {
             if (err) return console.error(err);
