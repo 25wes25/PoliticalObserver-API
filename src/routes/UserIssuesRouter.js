@@ -8,7 +8,7 @@ const DemographicModel = require('../models/demographic');
 const IssueDataModel = require('../models/issueData');
 const UserModel = require('../models/user');
 
-router.get('/userissues/stats/:issueid', getStatsForOneIssue);
+router.get('/userissues/stats/:issueid/:userid', getStatsForOneIssue);
 router.post('/userissues/', createUserIssue);
 
 
@@ -29,6 +29,7 @@ const ethnicityValues = ['white', 'african american', 'asian', 'native american'
 async function getStatsForOneIssue(request, response, next) {
     try {
         let userIssues = await UserIssueModel.find({issueId: String(request.params.issueid).toLowerCase()}).exec();
+        let userIssue = await UserIssueModel.find({userId: String(request.params.userid).toLowerCase(), issueId: String(request.params.issueid).toLowerCase()}).exec();
         let voteYes = 0;
         let voteNo = 0;
         for(let i = 0; i<userIssues.length; i++)
@@ -38,7 +39,7 @@ async function getStatsForOneIssue(request, response, next) {
             else
                 voteNo++;
         }
-        let data = [{x:'no', y:voteNo}, {x:'yes', y:voteYes}];
+        let data = {data: [{x:'no', y:voteNo}, {x:'yes', y:voteYes}], uservote: userIssue[0].vote};
         response.statusCode = statusOK;
         response.send(data);
     } catch (error) {
