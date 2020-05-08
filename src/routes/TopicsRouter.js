@@ -29,6 +29,7 @@ async function createTopic(request, response, next) {
 }
 
 async function modifyTopic(request, response, next) {
+    let data = request.body;
     try {
         TopicModel.findOneAndUpdate({_id: request.params.id}, data, {new: true}, function (err, dbRes) {
             if (err) return console.error(err);

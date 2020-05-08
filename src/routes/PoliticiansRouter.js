@@ -29,6 +29,7 @@ async function createPolitician(request, response, next) {
 }
 
 async function modifyPolitician(request, response, next) {
+    let data = request.body;
     try {
         PoliticianModel.findOneAndUpdate({_id: request.params.id}, data, {new: true}, function (err, dbRes) {
             if (err) return console.error(err);

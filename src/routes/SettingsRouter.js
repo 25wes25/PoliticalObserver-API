@@ -29,6 +29,7 @@ async function createSettings(request, response, next) {
 }
 
 async function modifySettings(request, response, next) {
+    let data = request.body;
     try {
         SettingsModel.findOneAndUpdate({_id: request.params.id}, data, {new: true}, function (err, dbRes) {
             if (err) return console.error(err);
