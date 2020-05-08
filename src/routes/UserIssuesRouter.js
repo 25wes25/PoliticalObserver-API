@@ -8,7 +8,6 @@ const DemographicModel = require('../models/demographic');
 const IssueDataModel = require('../models/issueData');
 const UserModel = require('../models/user');
 
-//router.get('/userissues/stats/:userid/:issueid', getUserIssueByUserId);
 router.get('/userissues/stats/:issueid', getStatsForOneIssue);
 router.post('/userissues/', createUserIssue);
 
@@ -26,37 +25,6 @@ const educationValues = ['none', 'diploma', 'associates', 'bachelors', 'masters'
 const ethnicityKeys = ['White', 'AfricanAmerican', 'Asian', 'NativeAmerican', 'Hispanic', 'Other'];
 const ethnicityValues = ['white', 'african american', 'asian', 'native american', 'hispanic', 'other'];
 
-//get issue that a user have voted on
-/*async function getUserIssueByUserId(request, response, next) {
-    try {
-        let userIssue = await UserIssueModel.find({userId: String(request.params.userid).toLowerCase(), issueId: String(request.params.issueid).toLowerCase()}).exec();
-        let issueAndStats = '{}';
-        if(userIssue.length>0)
-        {
-            let issueId = String(userIssue[0].issueId);
-            let issue = await IssueModel.findById(issueId).exec();
-            let stats = await getStatsForOneIssue(issueId);
-            issueAndStats = {
-                issueId: userIssue[0].issueId,
-                userId: userIssue[0].userId,
-                vote: userIssue[0].vote,
-                title: issue.title,
-                description: issue.description,
-                pros: issue.pros,
-                cons: issue.cons,
-                date: userIssue[0].date,
-                data: [{x:'yes', y:stats.yes}, {x:'no', y:stats.no}],
-                total : stats.total
-            }
-        }
-        response.statusCode = statusOK;
-        response.send(issueAndStats);
-    } catch (error) {
-        next(error);
-    }
-}*/
-
-//Helper function for getUserIssueByUserId
 //Gets stats for number of yes/no votes on an issue id
 async function getStatsForOneIssue(request, response, next) {
     try {
