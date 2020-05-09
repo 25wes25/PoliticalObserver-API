@@ -85,23 +85,6 @@ async function getGenderDemographics(request, response, next) {
     }
 }
 
-// if (data.left === 'age') {
-//
-// } else if (data.left === 'income') {
-//
-// }
-// if (data.right === 'age') {
-//
-// } else if (data.right === 'income') {
-//
-// }
-
-// if (data.left === 'age' || data.left === 'income') {
-//     rightResults.map(rightResult => {
-//         return rightResult.min.toString() + ' - ' + rightResult.max.toString();
-//     });
-// }
-
 async function getDemographicComparison(request, response, next) {
     let data = request.body;
     try {
