@@ -11,7 +11,7 @@ router.put('/demographics/:id', modifyDemographic);
 router.get('/demographics', getAllDemographics);
 router.get('/demographics/id/:id', getDemographicById);
 router.get('/demographics/gender', getGenderDemographics);
-router.get('/demographics/data/compare', getDemographicComparison);
+router.get('/demographics/data/compare/left/:left/right/:right', getDemographicComparison);
 
 // http status codes
 const statusOK = 200;
@@ -86,7 +86,7 @@ async function getGenderDemographics(request, response, next) {
 }
 
 async function getDemographicComparison(request, response, next) {
-    let data = request.body;
+    let data = {left: request.params.left, right: request.params.right};
     try {
         let demographics = await DemographicModel.find({$and: [{[data.left]: { $ne: null }}, {[data.right]: { $ne: null }}]}).exec();
         let leftData = comparisonDemographics[data.left];
@@ -99,14 +99,26 @@ async function getDemographicComparison(request, response, next) {
             });
             rightResults.forEach(result => {
                 result.y = demographics.reduce(function (n, demographic) {
-                    if (demographic[data.left] === category) {
-                        if (data.right === 'age' || data.right === 'income') {
-                            return n + ((demographic[data.right] >= result.x.min) && (demographic[data.right] <= result.x.max));
+                    if (data.left === 'age' || data.left === 'income') {
+                        if (demographic[data.right] === result.x) {
+                            if (demographic[data.left] >= category.min && demographic[data.left] <= category.max) {
+                                return n + 1;
+                            } else {
+                                return n + 0;
+                            }
                         } else {
-                            return n + (demographic[data.right] === result.x);
+                            return n + 0;
                         }
                     } else {
-                        return n + 0;
+                        if (demographic[data.left] === category) {
+                            if (data.right === 'age' || data.right === 'income') {
+                                return n + ((demographic[data.right] >= result.x.min) && (demographic[data.right] <= result.x.max));
+                            } else {
+                                return n + (demographic[data.right] === result.x);
+                            }
+                        } else {
+                            return n + 0;
+                        }
                     }
                 }, 0);
             });
