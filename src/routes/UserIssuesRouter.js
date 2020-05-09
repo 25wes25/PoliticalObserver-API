@@ -21,7 +21,7 @@ const genderValues = ['male', 'female', 'other'];
 const partyKeys = ['Democrat', 'Republican', 'Libertarian', 'Green', 'Constitution', 'Unaligned'];
 const partyValues = ['democrat', 'republican', 'libertarian', 'green', 'constitution', 'unaligned'];
 const educationKeys = ['None', 'Diploma', 'Associates', 'Bachelors', 'Masters', 'Doctoral'];
-const educationValues = ['none', 'diploma', 'associates', 'bachelors', 'masters', 'doctoral'];
+const educationValues = ['none', 'diploma', 'associate\'s', 'bachelor\'s', 'master\'s', 'doctoral'];
 const ethnicityKeys = ['White', 'AfricanAmerican', 'Asian', 'NativeAmerican', 'Hispanic', 'Other'];
 const ethnicityValues = ['white', 'african american', 'asian', 'native american', 'hispanic', 'other'];
 
