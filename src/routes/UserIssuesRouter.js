@@ -9,6 +9,7 @@ const IssueDataModel = require('../models/issueData');
 const UserModel = require('../models/user');
 
 router.get('/userissues/stats/:issueid/:userid', getStatsForOneIssue);
+router.get('/userissues/:issueid/:userid', getUserIssue);
 router.post('/userissues/', createUserIssue);
 
 
@@ -42,6 +43,16 @@ async function getStatsForOneIssue(request, response, next) {
         let data = {data: [{x:'no', y:voteNo}, {x:'yes', y:voteYes}], uservote: userIssue[0].vote};
         response.statusCode = statusOK;
         response.send(data);
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function getUserIssue(request, response, next) {
+    try {
+        let userIssue = await UserIssueModel.find({userId: String(request.params.userid).toLowerCase(), issueId: String(request.params.issueid).toLowerCase()}).exec();
+        response.statusCode = statusOK;
+        (userIssue.length>0) ? response.send(userIssue[0]): response.send({});
     } catch (error) {
         next(error);
     }
