@@ -124,6 +124,7 @@ async function createUserIssue(request, response, next) {
                             break;}
                     }
                 }
+                await IssueDataModel.findOneAndUpdate({issueId: dbRes.issueId}, {yes: issueData.yes, no:issueData.no}).exec();
                 let issue = await IssueModel.findById(dbRes.issueId).exec();
                 let userIssue = await UserIssueModel.find({userId: dbRes.userId, issueId: dbRes.issueId}).exec();
                 let votedInfo = {};
