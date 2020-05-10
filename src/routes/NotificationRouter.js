@@ -4,7 +4,8 @@ const mongoose = require('mongoose');
 
 const NotificationModel = require('../models/notification');
 
-//router.get('/notification/:id', getNotificationById);
+router.get('/notification/:id', getNotificationById);
+router.get('/notification/', getAllNotifications);
 router.post('/notification/', createNotification);
 
 // http status codes
@@ -23,6 +24,26 @@ async function createNotification(request, response, next) {
         response.send(new NotificationModel(dbRes));
     });
 
+}
+
+async function getNotificationById(request, response, next) {
+    try {
+        let notification = await NotificationModel.findById(request.params.id).exec();
+        response.statusCode = statusOK;
+        response.send({notification});
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function getAllNotifications(request, response, next) {
+    try {
+        let notifications = await NotificationModel.find().exec();
+        response.statusCode = statusOK;
+        response.send(notifications);
+    } catch (e) {
+        next(e);
+    }
 }
 
 module.exports = router;
