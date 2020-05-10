@@ -7,9 +7,9 @@ const UserIssueModel = require('../models/userissue');
 const IssueDataModel = require('../models/issueData');
 
 router.get('/issues', getAllIssues);
-router.get('/issues/id/:id', getIssueById);
-router.get('/issues/:userid', getIssues);
-router.get('/issues/filter/:userid/:keyword', getIssueByKeyword);
+router.get('/issues/:issueId/userId/:userId', getIssueById);
+router.get('/issues/:userId', getIssues);
+router.get('/issues/filter/:userId/:keyword', getIssueByKeyword);
 router.post('/issues/', createIssue);
 
 // http status codes
@@ -21,9 +21,30 @@ const statusError = 500;
 // GET (one) issue by issue id
 async function getIssueById(request, response, next) {
     try {
-        let issue = await IssueModel.findById(request.params.id).exec();
+        let issue = await IssueModel.findById(request.params.issueId).exec();
+        let userIssue = await UserIssueModel.find({userId: String(request.params.userId).toLowerCase(), issueId: String(request.params.issueId).toLowerCase()}).exec();
+        let votedInfo = {};
+        if (userIssue.length > 0) {
+            votedInfo.voted = true;
+            votedInfo.vote = userIssue[0].vote;
+            let voteYes = 0;
+            let voteNo = 0;
+            let userIssues = await UserIssueModel.find({issueId: String(request.params.issueId).toLowerCase()}).exec();
+            for(let i = 0; i<userIssues.length; i++)
+            {
+                if(userIssues[i].vote === "yes")
+                    voteYes++;
+                else
+                    voteNo++;
+            }
+            votedInfo.data = [{x:'no', y:voteNo}, {x:'yes', y:voteYes}];
+        } else {
+            votedInfo.voted = false;
+            votedInfo.vote = false;
+            votedInfo.data = [];
+        }
         response.statusCode = statusOK;
-        response.send(issue);
+        response.send({issue, votedInfo});
     } catch (error) {
         next(error);
     }
@@ -42,7 +63,7 @@ async function getAllIssues(request, response, next) {
 async function getIssues(request, response, next) {
     try {
         let issues = await IssueModel.find().exec();
-        let userIssues = await UserIssueModel.find({userId: String(request.params.userid).toLowerCase()}).exec();
+        let userIssues = await UserIssueModel.find({userId: String(request.params.userId).toLowerCase()}).exec();
         for(let i = 0; i<issues.length; i++)
         {
             for(let j = 0; j<userIssues.length; j++){
@@ -63,7 +84,7 @@ async function getIssueByKeyword(request, response, next) {
     //Get all issues filtered by a keyword (to get all -> keyword=all)
     try {
         let issues = await IssueModel.find().exec();
-        let userIssues = await UserIssueModel.find({userId: String(request.params.userid).toLowerCase()}).exec();
+        let userIssues = await UserIssueModel.find({userId: String(request.params.userId).toLowerCase()}).exec();
         let filteredIssues = [];
         let keyword = String(request.params.keyword).toLowerCase();
         for(let i = 0; i<issues.length; i++)
@@ -93,6 +114,7 @@ async function getIssueByKeyword(request, response, next) {
 
 async function createIssue(request, response, next) {
     let body = request.body;
+    body.date = new Date();
     const issue = new IssueModel(body);
     issue.save(async (err, dbRes) => {
         if (err) return console.error(err);
