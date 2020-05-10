@@ -8,7 +8,8 @@ const DemographicModel = require('../models/demographic');
 const IssueDataModel = require('../models/issueData');
 const UserModel = require('../models/user');
 
-router.get('/userissues/userid/:userid', getUserIssueByUserId);
+router.get('/userissues/stats/:issueid/:userid', getStatsForOneIssue);
+router.get('/userissues/:issueid/:userid', getUserIssue);
 router.post('/userissues/', createUserIssue);
 
 
@@ -21,48 +22,15 @@ const genderValues = ['male', 'female', 'other'];
 const partyKeys = ['Democrat', 'Republican', 'Libertarian', 'Green', 'Constitution', 'Unaligned'];
 const partyValues = ['democrat', 'republican', 'libertarian', 'green', 'constitution', 'unaligned'];
 const educationKeys = ['None', 'Diploma', 'Associates', 'Bachelors', 'Masters', 'Doctoral'];
-const educationValues = ['none', 'diploma', 'associates', 'bachelors', 'masters', 'doctoral'];
+const educationValues = ['none', 'diploma', 'associate\'s', 'bachelor\'s', 'master\'s', 'doctoral'];
 const ethnicityKeys = ['White', 'AfricanAmerican', 'Asian', 'NativeAmerican', 'Hispanic', 'Other'];
 const ethnicityValues = ['white', 'african american', 'asian', 'native american', 'hispanic', 'other'];
 
-//get all issue that a user have voted on
-async function getUserIssueByUserId(request, response, next) {
-    try {
-        let userIssues = await UserIssueModel.find({userId: String(request.params.userid).toLowerCase()}).exec();
-        let votedIssuesAndStats = [];
-        for(let i = 0; i<userIssues.length; i++)
-        {
-            let issueId = String(userIssues[i].issueId);
-            let issue = await IssueModel.findById(issueId).exec();
-            let stats = await getStatsForOneIssue(issueId);
-            let issueAndStats = {
-                issueId: userIssues[i].issueId,
-                userId: userIssues[i].userId,
-                vote: userIssues[i].vote,
-                title: issue.title,
-                description: issue.description,
-                pros: issue.pros,
-                cons: issue.cons,
-                date: userIssues[i].date,
-                yes : stats.yes,
-                no : stats.no,
-                total : stats.total
-            }
-            votedIssuesAndStats.push(issueAndStats);
-        }
-        response.statusCode = statusOK;
-        response.send(votedIssuesAndStats);
-    } catch (error) {
-        next(error);
-    }
-}
-
-//Helper function for getUserIssueByUserId
 //Gets stats for number of yes/no votes on an issue id
-async function getStatsForOneIssue(id) {
+async function getStatsForOneIssue(request, response, next) {
     try {
-        let stats = {};
-        let userIssues = await UserIssueModel.find({issueId: id}).exec();
+        let userIssues = await UserIssueModel.find({issueId: String(request.params.issueid).toLowerCase()}).exec();
+        let userIssue = await UserIssueModel.find({userId: String(request.params.userid).toLowerCase(), issueId: String(request.params.issueid).toLowerCase()}).exec();
         let voteYes = 0;
         let voteNo = 0;
         for(let i = 0; i<userIssues.length; i++)
@@ -72,14 +40,21 @@ async function getStatsForOneIssue(id) {
             else
                 voteNo++;
         }
-        stats =
-            {
-                yes : String(voteYes),
-                no : String(voteNo),
-                total : String(voteYes+voteNo)
-            }
-        return stats;
+        let data = {data: [{x:'no', y:voteNo}, {x:'yes', y:voteYes}], uservote: userIssue[0].vote};
+        response.statusCode = statusOK;
+        response.send(data);
     } catch (error) {
+        next(error);
+    }
+}
+
+async function getUserIssue(request, response, next) {
+    try {
+        let userIssue = await UserIssueModel.find({userId: String(request.params.userid).toLowerCase(), issueId: String(request.params.issueid).toLowerCase()}).exec();
+        response.statusCode = statusOK;
+        (userIssue.length>0) ? response.send(userIssue[0]): response.send({});
+    } catch (error) {
+        next(error);
     }
 }
 
@@ -91,20 +66,21 @@ async function createUserIssue(request, response, next) {
         let userIssueFounded = await UserIssueModel.find({issueId: request.body.issueId, userId: String(request.body.userId).toLowerCase()}).exec();
         if(userIssueFounded.length === 0)
         {
+            newObject.date = new Date();
             // add data to MongoDB database
             const userIssue = new UserIssueModel(newObject);
             userIssue.save(async (error, dbRes) => {
                 if (error) return console.error(error);
                 //find and update the existing issueData accordingly
-                let issueDataRes = await IssueDataModel.find({issueId: userIssue.issueId}).exec();
+                let issueDataRes = await IssueDataModel.find({issueId: dbRes.issueId}).exec();
                 let issueData = issueDataRes[0];
-                let user = await UserModel.findById(userIssue.userId).exec();
+                let user = await UserModel.findById(dbRes.userId).exec();
                 let demographic = await DemographicModel.findById(user.demographicId).exec();
                 let gender = String(demographic.gender).toLowerCase();
                 let party = String(demographic.partyAffiliation).toLowerCase();
                 let education = String(demographic.education).toLowerCase();
                 let ethnicity = String(demographic.ethnicity).toLowerCase();
-                if(String(userIssue.vote).toLowerCase()==='yes')
+                if(String(dbRes.vote).toLowerCase()==='yes')
                 {
                     for(let i = 0; i<genderKeys.length; i++) {
                         if(gender===genderValues[i]) {
@@ -148,10 +124,31 @@ async function createUserIssue(request, response, next) {
                             break;}
                     }
                 }
-                await IssueDataModel.findOneAndUpdate({issueId: userIssue.issueId}, {yes: issueData.yes, no:issueData.no}).exec();
-
+                await IssueDataModel.findOneAndUpdate({issueId: dbRes.issueId}, {yes: issueData.yes, no:issueData.no}).exec();
+                let issue = await IssueModel.findById(dbRes.issueId).exec();
+                let userIssue = await UserIssueModel.find({userId: dbRes.userId, issueId: dbRes.issueId}).exec();
+                let votedInfo = {};
+                if (userIssue.length > 0) {
+                    votedInfo.voted = true;
+                    votedInfo.vote = userIssue[0].vote;
+                    let voteYes = 0;
+                    let voteNo = 0;
+                    let userIssues = await UserIssueModel.find({issueId: dbRes.issueId}).exec();
+                    for(let i = 0; i<userIssues.length; i++)
+                    {
+                        if(userIssues[i].vote === "yes")
+                            voteYes++;
+                        else
+                            voteNo++;
+                    }
+                    votedInfo.data = [{x:'no', y:voteNo}, {x:'yes', y:voteYes}];
+                } else {
+                    votedInfo.voted = false;
+                    votedInfo.vote = false;
+                    votedInfo.data = [];
+                }
                 response.statusCode = statusOK;
-                response.send(new UserIssueModel(dbRes));
+                response.send({issue, votedInfo});
             });
         }
         else //if user has voted before on the issue, do nothing
