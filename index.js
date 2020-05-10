@@ -14,6 +14,7 @@ let topicsRouter = require('./src/routes/TopicsRouter');
 let userissuesRouter = require('./src/routes/UserIssuesRouter');
 let issueDataRouter = require('./src/routes/IssueDataRouter');
 let QuizRouter = require('./src/routes/QuizRouter');
+let PersonalityRouter = require('./src/routes/PersonalityRouter');
 
 // Local URL
 const url = 'mongodb://127.0.0.1:27017/PoliticalObserver';

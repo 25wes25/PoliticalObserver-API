@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-var QuizSchema = new Schema({
-    userID: String,
+var politicalQuizSchema = new Schema({
+    userId: String,
     socialAnswers: [Number],
     socialScore: Number,
     econAnswers: [Number],
@@ -14,7 +14,7 @@ var QuizSchema = new Schema({
     },
 });
 
-QuizSchema.set('toJSON', {
+politicalQuizSchema.set('toJSON', {
     transform: function (doc, ret, options) {
         ret.id = ret._id;
         delete ret._id;
@@ -22,4 +22,4 @@ QuizSchema.set('toJSON', {
     }
 });
 
-module.exports = mongoose.model('Quiz', QuizSchema);
+module.exports = mongoose.model('politicalQuiz', politicalQuizSchema);
