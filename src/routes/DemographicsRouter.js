@@ -18,9 +18,6 @@ const statusOK = 200;
 const statusNotFound = 404;
 const statusError = 500;
 
-const ethnicityKeys = ['White', 'AfricanAmerican', 'Asian', 'NativeAmerican', 'Hispanic', 'Other'];
-const ethnicityValues = ['White', 'African American', 'Asian', 'Native American', 'Hispanic', 'Other'];
-
 async function createDemographic(request, response, next) {
     let data = request.body;
     try {
