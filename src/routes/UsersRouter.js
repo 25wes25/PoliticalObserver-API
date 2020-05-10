@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 
+const { demographicsList } = require('../../constants');
+
 const UserModel = require('../models/user');
 const DemographicModel = require('../models/demographic');
 const SettingsModel = require('../models/settings');
@@ -11,6 +13,7 @@ router.put('/users/:id', modifyUser);
 router.get('/users', getAllUsers);
 router.get('/users/id/:id', getUserById);
 router.get('/users/email/:email', getUserByEmail);
+router.get('/users/:userId/data/insights', getUserInsights);
 router.delete('/users/:id', deleteUser);
 
 // http status codes
@@ -125,6 +128,87 @@ async function deleteUser(request, response, next) {
                 response.status(statusError).send(error.message);
             }
         });
+    } catch (e) {
+        next(e);
+    }
+}
+
+async function getUserInsights(request, response, next) {
+    try {
+        let userResult = await UserModel.find({_id: request.params.userId}).exec();
+        let user = {};
+        if (userResult.length >= 1) {
+            user = userResult[0];
+        } else {
+            response.statusCode = statusError;
+            next("No user found for get user insights");
+        }
+        let userDemographicResult = await DemographicModel.find({_id: user.demographicId}).exec();
+        let userDemographic = {};
+        if (userDemographicResult.length >= 1) {
+            userDemographic = userDemographicResult[0];
+        } else {
+            response.statusCode = statusError;
+            next("No Demographic found for get user insights");
+        }
+        let demographics = await DemographicModel.find().exec();
+        let results = [];
+        demographicsList.forEach(demographicObj => {
+            let demographicResults = [];
+            demographicObj.data.forEach(x => {
+                demographicResults.push({x: x, y: 0});
+            });
+            demographicResults.forEach(result => {
+                result.y = demographics.reduce(function (n, demographic) {
+                    if (demographicObj.key === 'age' || demographicObj.key === 'income') {
+                        if (demographic[demographicObj.key] >= result.x.min && demographic[demographicObj.key] <= result.x.max) {
+                            return n + 1;
+                        } else {
+                            return n + 0;
+                        }
+                    } else {
+                        if (demographic[demographicObj.key] === result.x) {
+                            return n + (demographic[demographicObj.key] === result.x);
+                        } else {
+                            return n + 0;
+                        }
+                    }
+                }, 0);
+            });
+            let amount = 0;
+            let total = 0;
+            let index = 0;
+            let count = 0;
+            demographicResults.forEach(result => {
+                if (demographicObj.key === 'age' || demographicObj.key === 'income') {
+                    if (userDemographic[demographicObj.key] >= result.x.min && userDemographic[demographicObj.key] <= result.x.max) {
+                        amount = result.y;
+                        index = count;
+                    }
+                } else {
+                    if (userDemographic[demographicObj.key] === result.x) {
+                        amount = result.y;
+                        index = count;
+                    }
+                }
+                total += result.y;
+                count++;
+            });
+            let percentage = Math.floor((amount / total) * 100);
+            if (demographicObj.key === 'age') {
+                demographicResults = demographicResults.map(result => {
+                    return {x: result.x.min.toString() + ' - ' + result.x.max.toString(), y: result.y};
+                });
+            } else if (demographicObj.key === 'income') {
+                demographicResults = demographicResults.map(result => {
+                    return {x: '$' + result.x.min.toString() + ' - $' + result.x.max.toString(), y: result.y};
+                });
+            }
+            results.push({type: demographicObj.type, percentage: percentage, index: index, data: demographicResults});
+        });
+
+        response.statusCode = statusOK;
+        response.send(results);
     } catch (e) {
         next(e);
     }
