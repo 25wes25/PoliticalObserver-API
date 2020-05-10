@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 
+const { comparisonDemographics } = require('../../constants');
+
 const DemographicModel = require('../models/demographic');
 
 router.post('/demographics', createDemographic);
@@ -9,10 +11,8 @@ router.put('/demographics/:id', modifyDemographic);
 router.get('/demographics', getAllDemographics);
 router.get('/demographics/id/:id', getDemographicById);
 router.get('/demographics/gender', getGenderDemographics);
-router.get('/demographics/party', getPartyDemographics);
-router.get('/demographics/education', getEducationDemographics);
-router.get('/demographics/marital', getMaritalDemographics);
-router.get('/demographics/marital/id/:id', getMaritalDemographicsById);
+router.get('/demographics/data/compare/left/:left/right/:right', getDemographicComparison);
+
 // http status codes
 const statusOK = 200;
 const statusNotFound = 404;
@@ -88,78 +88,61 @@ async function getGenderDemographics(request, response, next) {
     }
 }
 
-async function getPartyDemographics(request, response, next) {
+async function getDemographicComparison(request, response, next) {
+    let data = {left: request.params.left, right: request.params.right};
     try {
-        let demographics = await DemographicModel.find().exec();
-        let results = [{x: 'Democrat', y: 0}, {x: 'Republican', y: 0}, {x: 'Libertarian', y: 0}, {x: 'Green', y: 0}, {x: 'Constitution', y: 0}, {x: 'Unaligned', y: 0}];
-        results.forEach(result => {
-            result.y = demographics.reduce(function (n, demographic) {
-                return n + (demographic.partyAffiliation === result.x);
-            }, 0);
-        });
-        response.statusCode = statusOK;
-        response.send(results);
-    } catch (e) {
-        next(e);
-    }
-}
-
-async function getEducationDemographics(request, response, next) {
-    try {
-        let demographics = await DemographicModel.find().exec();
-        let results = [{x: 'None', y: 0}, {x: 'Diploma', y: 0}, {x: 'Associates', y: 0}, {x: 'Bachelors', y: 0}, {x: 'Masters', y: 0}, {x: 'Doctoral', y: 0}];
-        results.forEach(result => {
-            result.y = demographics.reduce(function (n, demographic) {
-                return n + (demographic.education === result.x);
-            }, 0);
-        });
-        response.statusCode = statusOK;
-        response.send(results);
-    } catch (e) {
-        next(e);
-    }
-}
-
-async function getMaritalDemographics(request, response, next) {
-    try {
-        let demographics = await DemographicModel.find().exec();
-        let results = [{x: 'Single', y: 0}, {x: 'Married', y: 0}];
-        results.forEach(result => {
-            result.y = demographics.reduce(function (n, demographic) {
-                return n + (demographic.maritalStatus === result.x);
-            }, 0);
-        });
-        response.statusCode = statusOK;
-        response.send(results);
-    } catch (e) {
-        next(e);
-    }
-}
-
-// async function getAllDemographicInsights (request, response, next) {
-//
-// }
-
-async function getMaritalDemographicsById (request, response, next) {
-    try {
-        let demographics = await DemographicModel.find().exec();
-        let results = [{x: 'Single', y: 0}, {x: 'Married', y: 0}];
-        let userGroup = 'Single';
-        let groupTotal = 0;
-        let totalMarital = 0;
-        let maritalStat = 0;
-        results.forEach(result => {
-            result.y = demographics.reduce(function (n, demographic) {
-                return n + (demographic.maritalStatus === result.x);
-            }, 0);
-            totalMarital += result.y;
-            if (result.x == userGroup){
-                groupTotal = result.y;
+        let demographics = await DemographicModel.find({$and: [{[data.left]: { $ne: null }}, {[data.right]: { $ne: null }}]}).exec();
+        let leftData = comparisonDemographics[data.left];
+        let rightData = comparisonDemographics[data.right];
+        let results = [];
+        leftData.forEach(category => {
+            let rightResults = [];
+            rightData.forEach(x => {
+                rightResults.push({x: x, y: 0});
+            });
+            rightResults.forEach(result => {
+                result.y = demographics.reduce(function (n, demographic) {
+                    if (data.left === 'age' || data.left === 'income') {
+                        if (demographic[data.right] === result.x) {
+                            if (demographic[data.left] >= category.min && demographic[data.left] <= category.max) {
+                                return n + 1;
+                            } else {
+                                return n + 0;
+                            }
+                        } else {
+                            return n + 0;
+                        }
+                    } else {
+                        if (demographic[data.left] === category) {
+                            if (data.right === 'age' || data.right === 'income') {
+                                return n + ((demographic[data.right] >= result.x.min) && (demographic[data.right] <= result.x.max));
+                            } else {
+                                return n + (demographic[data.right] === result.x);
+                            }
+                        } else {
+                            return n + 0;
+                        }
+                    }
+                }, 0);
+            });
+            if (data.right === 'age') {
+                rightResults = rightResults.map(rightResult => {
+                    return {x: rightResult.x.min.toString() + ' - ' + rightResult.x.max.toString(), y: rightResult.y};
+                });
+            } else if (data.right === 'income') {
+                rightResults = rightResults.map(rightResult => {
+                    return {x: '$' + rightResult.x.min.toString() + ' - $' + rightResult.x.max.toString(), y: rightResult.y};
+                });
             }
+            if (data.left === 'age') {
+                category = category.min.toString() + ' - ' + category.max.toString();
+            } else if (data.left === 'income') {
+                category = '$' + category.min.toString() + ' - $' + category.max.toString();
+            }
+            results.push({category: category, data: rightResults});
         });
-        maritalStat = (groupTotal / totalMarital) * 100;
         response.statusCode = statusOK;
-        response.send({maritalStat: maritalStat});
+        response.send(results);
     } catch (e) {
         next(e);
     }
