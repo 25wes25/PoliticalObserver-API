@@ -93,8 +93,8 @@ async function createPersonalityQuiz(request, response, next) {
             finalTactic = 'P';
         }
 
-        personalityType = finalMind + finalEnergy + finalNature + finalTactic;
-        quiz.personalityType = personalityType;
+        personalityScore = finalMind + finalEnergy + finalNature + finalTactic;
+        quiz.personalityScore = personalityScore;
         quiz.save(function (err, dbRes) {
             if (err) return console.error(err);
             response.statusCode = statusOK;

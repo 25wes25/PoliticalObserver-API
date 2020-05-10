@@ -8,7 +8,7 @@ var personalityQuizSchema = new Schema({
     energyAnswers: [Number],
     natureAnswers: [Number],
     tacticAnswers: [Number],
-    personalityType: String,
+    personalityScore: String,
 },{
     toJSON: {
         getters: true,
