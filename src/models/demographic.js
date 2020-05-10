@@ -4,13 +4,13 @@ const Schema = mongoose.Schema;
 
 var demographicSchema = new Schema({
     age: Number,
+    state: String,
     gender: String,
     ethnicity: String,
     maritalStatus: String,
     education: String,
     occupation: String,
-    incomeLevel: String,
-    state: String,
+    income: Number,
     personalityType: String,
     partyAffiliation: String,
     politicalAffiliation: String,
