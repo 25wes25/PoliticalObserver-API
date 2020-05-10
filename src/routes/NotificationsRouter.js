@@ -34,7 +34,7 @@ async function getNotificationById(request, response, next) {
     try {
         let notification = await NotificationModel.findById(request.params.id).exec();
         response.statusCode = statusOK;
-        response.send({notification});
+        response.send(notification);
     } catch (error) {
         next(error);
     }
