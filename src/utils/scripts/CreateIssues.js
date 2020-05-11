@@ -14,6 +14,7 @@ db.on('error', err => {
 });
 
 const IssueModel = require('../../models/issue');
+const IssueDataModel = require('../../models/issueData');
 
 issuesList = [
     {
@@ -60,14 +61,14 @@ issuesList = [
     },
     {
         title: "Abortion should be banned",
-        description: "Do you agree with ban on abortion?",
+        description: "Do you agree with a ban on abortion?",
         pros: "It can save lives",
         cons: "It can destroy lives",
         notes: "read more",
     },
     {
         title: "Plastic bags should be banned",
-        description: "Do you agree with on production and usage of plastic bags?",
+        description: "Do you agree with a ban on production and usage of plastic bags?",
         pros: "It can save the planet",
         cons: "It can be less convenient for users and more costly for producers ",
         notes: "read more",
@@ -94,5 +95,25 @@ for (let i = 0; i < issuesList.length; i++) {
     issue.date = moment().subtract(Math.random()*10, 'days');
     issue.save(async (err, dbRes) => {
         if (err) return console.error(err);
+        let data = {
+            issueId: new IssueModel(dbRes).id,
+            yes: {
+                gender:{Male: 0, Female: 0, Other: 0},
+                party:{Democrat: 0, Republican: 0, Libertarian: 0, Green: 0, Constitution: 0, Unaligned:0},
+                education:{None: 0, Diploma: 0, Associates: 0, Bachelors: 0, Masters: 0, Doctoral:0},
+                ethnicity:{White: 0, AfricanAmerican: 0, Asian: 0, NativeAmerican: 0, Hispanic: 0, Other:0}
+
+            },
+            no:{
+                gender:{Male: 0, Female: 0, Other: 0},
+                party:{Democrat: 0, Republican: 0, Libertarian: 0, Green: 0, Constitution: 0, Unaligned:0},
+                education:{None: 0, Diploma: 0, Associates: 0, Bachelors: 0, Masters: 0, Doctoral:0},
+                ethnicity:{White: 0, AfricanAmerican: 0, Asian: 0, NativeAmerican: 0, Hispanic: 0, Other:0}
+            }
+        }
+        let issueData = new IssueDataModel(data);
+        await issueData.save(function (err, dbRes) {
+            if (err) console.error(err);
+        });
     });
 }
