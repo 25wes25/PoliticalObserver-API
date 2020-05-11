@@ -9,6 +9,9 @@ var politicianSchema = new Schema({
     state: String,
     dateOfBirth: Date,
     bio: String,
+    address: String,
+    phone: String,
+    website: String,
 },{
     toJSON: {
         getters: true,

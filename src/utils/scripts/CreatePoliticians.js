@@ -41,6 +41,7 @@ for(let i = 0; i<states.length; i+=1)
                 {
                     //beginning of information for the next senator
                     senator = new PoliticianModel();
+                    senator.position = 'Senator';
                     senator.name = dataItem.substr(0, dataItem.indexOf("\n"));
                     senator.party = dataItem.substr(dataItem.indexOf("(")+1,1);
                     senator.state = dataItem.substr(dataItem.indexOf("(")+5, 2);
