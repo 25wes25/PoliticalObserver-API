@@ -6,7 +6,7 @@ const PersonalityModel = require('../models/personality');
 
 router.post('/personality', createPersonality);
 router.put('/personality/:id', modifyPersonality);
-router.get('/personality/personalityType/:personalityType', getPersonalityByName);
+router.get('/personality/personalityType/:personalityType', getPersonalityByType);
 
 // http status codes
 const statusOK = 200;
@@ -40,7 +40,7 @@ async function modifyPersonality(request, response, next) {
     }
 }
 
-async function getPersonalityByName(request, response, next) {
+async function getPersonalityByType(request, response, next) {
     try {
         let personality = await PersonalityModel.find({personalityType: request.params.personalityType}).exec();
         if (personality.length >= 1) {
@@ -48,7 +48,7 @@ async function getPersonalityByName(request, response, next) {
             response.send(personality[0]);
         } else {
             response.statusCode = statusError;
-            next("No personality found for get personality by id");
+            next("No personality found for get personality by type");
         }
     } catch (e) {
         next(e);

@@ -8,6 +8,7 @@ var politicalQuizSchema = new Schema({
     socialScore: Number,
     econAnswers: [Number],
     econScore: Number,
+    politicalScore: String,
 },{
     toJSON: {
         getters: true,

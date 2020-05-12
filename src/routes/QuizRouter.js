@@ -15,26 +15,115 @@ const statusOK = 200;
 const statusNotFound = 404;
 const statusError = 500;
 
+
 async function createPoliticalQuiz(request, response, next) {
     let data = request.body;
     try {
         const quiz = new politicalQuizModel(data);
         let socialArray = quiz.socialAnswers;
         let econArray = quiz.econAnswers;
-        let socialScore = 0;
-        let econScore = 0;
         let totalSocial = 0;
         let totalEcon = 0;
+
         for (let i = 0; i < socialArray.length; i++){
-            totalSocial = totalSocial + socialArray[i];
+            if(i < 3){
+                if (socialArray[i] == 1){
+                    totalSocial = totalSocial + 1;
+                }
+                else if (socialArray[i] == 2){
+                    totalSocial = totalSocial + 0.5;
+                }
+                else if (socialArray[i] == 3){
+                    totalSocial = totalSocial - 0.5;
+                }
+                else {
+                    totalSocial = totalSocial - 1;
+                }
+            }
+            else {
+                if (socialArray[i] == 1){
+                    totalSocial = totalSocial - 1;
+                }
+                else if (socialArray[i] == 2){
+                    totalSocial = totalSocial - 0.5;
+                }
+                else if (socialArray[i] == 3){
+                    totalSocial = totalSocial + 0.5;
+                }
+                else {
+                    totalSocial = totalSocial + 1;
+                }
+            }
         }
-        for (let i = 0; i < socialArray.length; i++){
-            totalEcon = totalEcon + econArray[i];
+
+        for (let i = 0; i < econArray.length; i++){
+            if(i < 3){
+                if (econArray[i] == 1){
+                    totalEcon = totalEcon + 1;
+                }
+                else if (econArray[i] == 2){
+                    totalEcon = totalEcon + 0.5;
+                }
+                else if (econArray[i] == 3){
+                    totalEcon = totalEcon - 0.5;
+                }
+                else {
+                    totalEcon = totalEcon - 1;
+                }
+            }
+            else {
+                if (econArray[i] == 1){
+                    totalEcon = totalEcon - 1;
+                }
+                else if (econArray[i] == 2){
+                    totalEcon = totalEcon - 0.5;
+                }
+                else if (econArray[i] == 3){
+                    totalEcon = totalEcon + 0.5;
+                }
+                else {
+                    totalEcon = totalEcon + 1;
+                }
+            }
         }
-        socialScore = totalSocial/socialArray.length;
-        quiz.socialScore = socialScore;
-        econScore = totalEcon/econArray.length;
-        quiz.econScore = econScore;
+
+        quiz.socialScore = totalSocial;
+        quiz.econScore = totalEcon;
+
+        if (quiz.econScore < -2){
+            if (quiz.socialScore > 2){
+                quiz.politicalScore = 'National Socialist'
+            }
+            else if (quiz.socialScore >= -2 && quiz.socialScore <= 2){
+                quiz.politicalScore = 'Liberal'
+            }
+            else {
+                quiz.politicalScore = 'Anarcho-Socialist'
+            }
+        }
+        else if (quiz.econScore >= -2 && quiz.econScore <= 2){
+            if (quiz.socialScore > 2){
+                quiz.politicalScore = 'Authoritarian'
+            }
+            else if (quiz.socialScore >= -2 && quiz.socialScore <= 2){
+                quiz.politicalScore = 'Moderate'
+            }
+            else {
+                quiz.politicalScore = 'Libertarian'
+            }
+        }
+        else {
+            if (quiz.socialScore > 2){
+                quiz.politicalScore = 'Traditionalist'
+            }
+            else if (quiz.socialScore >= -2 && quiz.socialScore <= 2){
+                quiz.politicalScore = 'Conservative'
+            }
+            else {
+                quiz.politicalScore = 'Anarcho-Capitalist'
+            }
+        }
+
         quiz.save(function (err, dbRes) {
             if (err) return console.error(err);
             response.statusCode = statusOK;
@@ -61,7 +150,7 @@ async function createPersonalityQuiz(request, response, next) {
         let finalEnergy = '';
         let finalNature = '';
         let finalTactic = '';
-        let personalityType = '';
+        let personalityScore = '';
         for (let i = 0; i < mindArray.length; i++){
             mindScore = mindScore + mindArray[i];
             energyScore = energyScore + energyArray[i];
@@ -107,7 +196,7 @@ async function createPersonalityQuiz(request, response, next) {
 
 async function getPoliticalQuizScoreByUserId(request, response, next) {
     try {
-        let quiz = await politicalQuizModel.find({userId: request.params.userid}).exec();
+        let quiz = await politicalQuizModel.find({userId: request.params.userId}).exec();
         if (quiz.length >= 1) {
             response.statusCode = statusOK;
             response.send(quiz[0]);

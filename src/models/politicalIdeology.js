@@ -2,20 +2,16 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-var personalitySchema = new Schema({
-    personalityType: String,
-    name: String,
-    stats: String,
+var politicalIdeologySchema = new Schema({
+    ideology: String,
     description: String,
-    strengths: String,
-    weaknesses: String,
 },{
     toJSON: {
         getters: true,
     },
 });
 
-personalitySchema.set('toJSON', {
+politicalIdeologySchema.set('toJSON', {
     transform: function (doc, ret, options) {
         ret.id = ret._id;
         delete ret._id;
@@ -23,4 +19,4 @@ personalitySchema.set('toJSON', {
     }
 });
 
-module.exports = mongoose.model('personality', personalitySchema);
+module.exports = mongoose.model('politicalIdeology', politicalIdeologySchema);
