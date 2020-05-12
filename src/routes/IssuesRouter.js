@@ -8,7 +8,7 @@ const IssueDataModel = require('../models/issueData');
 
 router.get('/issues', getAllIssues);
 router.get('/issues/:issueId/userId/:userId', getIssueById);
-router.get('/issues/:userId', getIssues);
+router.get('/issues/:userId', getUsersIssues);
 router.get('/issues/filter/:userId/:keyword', getIssueByKeyword);
 router.post('/issues/', createIssue);
 
@@ -60,18 +60,13 @@ async function getAllIssues(request, response, next) {
     }
 }
 
-async function getIssues(request, response, next) {
+async function getUsersIssues(request, response, next) {
     try {
-        let issues = await IssueModel.find().exec();
         let userIssues = await UserIssueModel.find({userId: String(request.params.userId).toLowerCase()}).exec();
-        for(let i = 0; i<issues.length; i++)
+        let issues = [];
+        for(let i = 0; i < userIssues.length; i++)
         {
-            for(let j = 0; j<userIssues.length; j++){
-                if(issues[i]._id==userIssues[j].issueId) {
-                    issues.splice(i--, 1);
-                    break;
-                }
-            };
+            issues.push(await IssueModel.findById(userIssues[i].issueId).exec());
         }
         response.statusCode = statusOK;
         response.send(issues);
