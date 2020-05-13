@@ -260,7 +260,7 @@ topicList = [
         title: "Law",
         category: "Legislative",
         subCategory: "Definition",
-        description: "Law has been variously described as a science[6][7] and the art of justice.",
+        description: "Law has been variously described as a science and the art of justice.",
         body: " State-enforced laws can be made by a collective legislature or by a single legislator, resulting in statutes, by the executive through decrees and regulations, or established by judges through precedent, normally in common law jurisdictions. " +
               " Private individuals can create legally binding contracts, including arbitration agreements that may elect to accept alternative arbitration to the normal court process. The formation of laws themselves may be influenced by a constitution, written or tacit, and the rights encoded therein. " +
               " The law shapes politics, economics, history and society in various ways and serves as a mediator of relations between people.",
@@ -284,7 +284,7 @@ topicList = [
               " From a political-philosophical perspective, referendums are an expression of direct democracy, but today, most referendums need to be understood within the context of representative democracy. They tend to be used quite selectively, covering issues such as changes in voting systems, where currently elected officials may not have the legitimacy or inclination to implement such changes.",
     },
     {
-        title: "Referendum",
+        title: "Voting",
         category: "Voting",
         subCategory: "Definition",
         description: "Voting is a method for a group, such as a meeting or an electorate, in order to make a collective decision or express an opinion usually following discussions, debates or election campaigns. Democracies elect holders of high office by voting.",
