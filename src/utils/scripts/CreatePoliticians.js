@@ -80,7 +80,7 @@ for(let i = 0; i<states.length; i+=1)
                 if(j%4 == 0)//fourth: has website - last data section for a senator
                 {
                     let length = dataItem.indexOf(".gov")+ 4 -dataItem.indexOf("www.");
-                    senator.website = dataItem.substr(dataItem.indexOf("www."), length);
+                    senator.website = {url: dataItem.substr(dataItem.indexOf("www."), length)};
 
                     //end of records for the senator - save record
                     const politician = new PoliticianModel(senator);
@@ -96,7 +96,7 @@ for(let i = 0; i<states.length; i+=1)
 for(let i = 0; i<zipRanges.length; i+=1)
 {
     let namePrev = '';
-    for(let zip = zipRanges[i].start; zip<zipRanges[i].end; zip+=200)
+    for(let zip = zipRanges[i].start; zip<zipRanges[i].end; zip+=100)
     {
         console.log(zip);
         const urlSenate = "https://ziplook.house.gov/htbin/findrep_house?ZIP="+zip;
@@ -128,7 +128,7 @@ for(let i = 0; i<zipRanges.length; i+=1)
                     {
                         let representativeData = {
                             name: name,
-                            position: 'House Representative',
+                            position: 'Representative',
                             party: party,
                             state: zipRanges[i].state,
                             website: {url: website},
