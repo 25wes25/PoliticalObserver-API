@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 let urlSchema = new Schema({
-    url: String,
+    uri: String,
 },{
     toJSON: {
         getters: true,
