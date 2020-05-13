@@ -31,21 +31,23 @@ notificationsList = [
             sectionTitle: "3.) View your voter information guide.",
             sectionLink: 'https://voterguide.sos.ca.gov/',
             sectionBody: "The Official Voter Information Guide for the November 3, 2020, General Election will be available in September 2020."
+            sectionLinkText: "View Voter Guide",
         }]
     },
     {
         title: "Election's Coming Up!",
         body:[{
             sectionTitle: "Start researching your favorite candidates!",
+            sectionBody: "Check out past actions your favorite politicians have engaged in.",
             sectionLink: "https://voterstatus.sos.ca.gov/",
-            sectionLinkText: "Check out past actions your favorite politicians have engaged in."
+            sectionLinkText: "View Voter Status",
         }]
     },
     {
         title: "Cast your choice for who you think did well during the last debate.",
         body:[{
             sectionTitle: "Vote in the current live poll!",
-            sectionLinkText: "67% of users have participated in the latest poll."
+            sectionBody: "67% of users have participated in the latest poll."
         }]
     },
 ]
