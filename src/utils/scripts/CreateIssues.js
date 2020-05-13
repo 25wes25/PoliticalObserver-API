@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const moment = require('moment');
-const url = 'mongodb://127.0.0.1:27017/PoliticalObserver';
+const url = 'mongodb://127.0.0.1:27017/PoliticalObserverNew';
 
 // Connect to MongoDB server
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
@@ -20,57 +20,57 @@ issuesList = [
     {
         title: "Public Health COVID-19",
         description: "Do you agree with schools opening in fall 2020?",
-        pros: "chilredn will go back to school",
-        cons: "increased risk of infection",
+        pros: "Children will continue receiving a standard education.",
+        cons: "Increased risk of infection.",
         notes: "read more",
     },
     {
         title: "Federal Health Insurance",
         description: "Do you agree with federal health insurance for all Americans?",
-        pros: "All americans would be insured",
+        pros: "All americans would be insured.",
         cons: "The money could not be spent on other problems of the country.",
         notes: "read more",
     },
     {
         title: "Federal Tax Reduction",
         description: "Do you agree with federal tax reduction?",
-        pros: "Less tax money to pay for individuals",
-        cons: "Unclear long term consequences",
+        pros: "Less tax money to pay for individuals.",
+        cons: "Cuts to existing programs or budgets.",
         notes: "read more",
     },
     {
         title: "Sate Tax Reduction",
         description: "Do you agree with state tax reduction?",
-        pros: "Less tax money to pay for individuals",
-        cons: "Unclear long term consequences",
+        pros: "Less tax money to pay for individuals.",
+        cons: "Unclear long term consequences.",
+        notes: "Cuts to existing programs or budgets.",
+    },
+    {
+        title: "2nd Amendment",
+        description: "All people should have the right to bear arms?",
+        pros: "An individual can protect themselves and citizens are capable of keeping government in check.",
+        cons: "Availability of firearms can cause mass shootings to occur more frequently.",
         notes: "read more",
     },
     {
-        title: "Federal Government Handling of COVID-19",
-        description: "All people should have the right to own all types of guns?",
-        pros: "It may help people protect themselves.",
-        cons: "It may decrease safety of the society",
-        notes: "read more",
-    },
-    {
-        title: "The death penalty",
+        title: "The Death Penalty",
         description: "Do you agree with abolition of death penalty?",
         pros: "It can save life of innocent people who have been wrongfully convicted.",
         cons: "The murderer may have a chance to attempt murder again.",
         notes: "read more",
     },
     {
-        title: "Abortion should be banned",
+        title: "Abortion",
         description: "Do you agree with a ban on abortion?",
-        pros: "It can save lives",
-        cons: "It can destroy lives",
+        pros: "It can save lives.",
+        cons: "It can destroy lives.",
         notes: "read more",
     },
     {
-        title: "Plastic bags should be banned",
+        title: "Plastic Bags",
         description: "Do you agree with a ban on production and usage of plastic bags?",
-        pros: "It can save the planet",
-        cons: "It can be less convenient for users and more costly for producers ",
+        pros: "It can save the planet.",
+        cons: "It can be less convenient for users and more costly for producers.",
         notes: "read more",
     },
     {
@@ -88,7 +88,7 @@ issuesList = [
         notes: "read more",
     },
 
-]
+];
 
 for (let i = 0; i < issuesList.length; i++) {
     let issue  = new IssueModel(issuesList[i]);

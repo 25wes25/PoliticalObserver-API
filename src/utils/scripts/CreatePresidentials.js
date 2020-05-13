@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const fetch = require('node-fetch');
 const HTMLparser = require('node-html-parser');
-const url = 'mongodb://127.0.0.1:27017/PoliticalObserver';
+const url = 'mongodb://127.0.0.1:27017/PoliticalObserverNew';
 
 // Connect to MongoDB server
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
@@ -30,12 +30,12 @@ let presidentialPoliticians =
     },
     {
         position: "48th vice president",
-        name: "Donald John Trump",
+        name: "Mike Pence",
         party: "R",
         state: "Washington, D.C",
         address: "1600 Pennsylvania Avenue NW in Washington, D.C.",
         phone: "202-456-2121",
-        website: "https://www.usa.gov/federal-agencies/white-house",
+        website: "https://www.whitehouse.gov/people/mike-pence/",
     },
     {
         position: "44th President",

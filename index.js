@@ -19,7 +19,7 @@ let notificationsRouter = require('./src/routes/NotificationsRouter');
 let PoliticalIdeologyRouter = require('./src/routes/PoliticalIdeologyRouter');
 
 // Local URL
-const url = 'mongodb://127.0.0.1:27017/PoliticalObserver';
+const url = 'mongodb://127.0.0.1:27017/PoliticalObserverNew';
 // Development URL
 // const url = 'mongodb+srv://Admin:admin@political-observer-cluster-mmirq.mongodb.net/test?retryWrites=true&w=majority';
 
