@@ -204,7 +204,7 @@ async function getUserInsights(request, response, next) {
                     return {x: '$' + result.x.min.toString() + ' - $' + result.x.max.toString(), y: result.y};
                 });
             }
-            results.push({type: demographicObj.type, percentage: percentage, index: index, data: demographicResults});
+            results.push({type: demographicObj.type, key: demographicObj.key, percentage: percentage, index: index, data: demographicResults});
         });
 
         response.statusCode = statusOK;

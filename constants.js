@@ -12,7 +12,6 @@ const partyAffiliation = ['Democrat','Republican','Libertarian','Green','Constit
 const comparisonDemographics = {
     age: age,
     gender: gender,
-    state: state,
     maritalStatus: maritalStatus,
     ethnicity: ethnicity,
     education: education,
@@ -25,7 +24,6 @@ const demographicsList = [
     {type: 'Age', key: 'age', data: age},
     {type: 'Gender', key: 'gender', data: gender},
     {type: 'Marital Status', key: 'maritalStatus', data: maritalStatus},
-    {type: 'State', key: 'state', data: state},
     {type: 'Ethnicity', key: 'ethnicity', data: ethnicity},
     {type: 'Education', key: 'education', data: education},
     {type: 'Income', key: 'income', data: income},
