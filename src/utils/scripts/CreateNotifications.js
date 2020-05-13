@@ -17,7 +17,16 @@ const NotificationsModel = require('../../models/notification');
 
 notificationsList = [
     {
+        title: "Cast your choice for who you think did well during the last debate.",
+        date: moment(),
+        body:[{
+            sectionTitle: "Vote in the current live poll!",
+            sectionBody: "67% of users have participated in the latest poll."
+        }]
+    },
+    {
         title: "Election Starter Pack",
+        date: moment(),
         body:[{
             sectionTitle: "1.) Check Your Voter Registration Status.",
             sectionLink: "https://voterstatus.sos.ca.gov/",
@@ -36,18 +45,12 @@ notificationsList = [
     },
     {
         title: "Election's Coming Up!",
+        date: moment(),
         body:[{
             sectionTitle: "Start researching your favorite candidates!",
             sectionBody: "Check out past actions your favorite politicians have engaged in.",
             sectionLink: "https://voterstatus.sos.ca.gov/",
             sectionLinkText: "View Voter Status",
-        }]
-    },
-    {
-        title: "Cast your choice for who you think did well during the last debate.",
-        body:[{
-            sectionTitle: "Vote in the current live poll!",
-            sectionBody: "67% of users have participated in the latest poll."
         }]
     },
 ]
