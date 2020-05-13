@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const moment = require('moment');
-const url = 'mongodb://127.0.0.1:27017/PoliticalObserver';
+const url = 'mongodb://127.0.0.1:27017/PoliticalObserverNew';
 
 // Connect to MongoDB server
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
