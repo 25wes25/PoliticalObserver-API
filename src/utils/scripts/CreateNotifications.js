@@ -29,6 +29,7 @@ notificationsList = [
             sectionLinkText: "Register to Vote"
         },{
             sectionTitle: "3.) View your voter information guide.",
+            sectionLink: 'https://voterguide.sos.ca.gov/',
             sectionBody: "The Official Voter Information Guide for the November 3, 2020, General Election will be available in September 2020."
         }]
     },
