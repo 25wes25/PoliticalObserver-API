@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const fetch = require('node-fetch');
 const HTMLparser = require('node-html-parser');
-const url = 'mongodb://127.0.0.1:27017/PoliticalObserver';
+const url = 'mongodb://127.0.0.1:27017/PoliticalObserverNew';
 
 // Connect to MongoDB server
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });

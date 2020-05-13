@@ -96,7 +96,7 @@ for(let i = 0; i<states.length; i+=1)
 for(let i = 0; i<zipRanges.length; i+=1)
 {
     let namePrev = '';
-    for(let zip = zipRanges[i].start; zip<zipRanges[i].end; zip+=100)
+    for(let zip = zipRanges[i].start; zip<zipRanges[i].end; zip+=200)
     {
         console.log(zip);
         const urlSenate = "https://ziplook.house.gov/htbin/findrep_house?ZIP="+zip;
@@ -119,6 +119,11 @@ for(let i = 0; i<zipRanges.length; i+=1)
                         .querySelector('a').getAttribute('href');
                     let website = representativeData2;
                     //console.log(website);
+                    let representativeData3 = dataHtml
+                        .querySelector('.repdistrict')
+                        .querySelector('img').getAttribute('src');
+                    let image = 'https://ziplook.house.gov' + representativeData3;
+                    //console.log(image);
                     if(namePrev!==name)
                     {
                         let representativeData = {
@@ -126,7 +131,8 @@ for(let i = 0; i<zipRanges.length; i+=1)
                             position: 'House Representative',
                             party: party,
                             state: zipRanges[i].state,
-                            website: website,
+                            website: {url: website},
+                            imageUrl: {url:image},
                         }
                         let representative = new PoliticianModel(representativeData);
                         await representative.save(function (err, dbRes) {
