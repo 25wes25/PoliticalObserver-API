@@ -39,7 +39,7 @@ issuesList = [
         notes: "read more",
     },
     {
-        title: "Sate Tax Reduction",
+        title: "State Tax Reduction",
         description: "Do you agree with state tax reduction?",
         pros: "Less tax money to pay for individuals.",
         cons: "Unclear long term consequences.",
