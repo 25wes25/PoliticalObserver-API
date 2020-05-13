@@ -80,7 +80,7 @@ for(let i = 0; i<states.length; i+=1)
                 if(j%4 == 0)//fourth: has website - last data section for a senator
                 {
                     let length = dataItem.indexOf(".gov")+ 4 -dataItem.indexOf("www.");
-                    senator.website = dataItem.substr(dataItem.indexOf("www."), length);
+                    senator.website = {uri: dataItem.substr(dataItem.indexOf("www."), length)};
 
                     //end of records for the senator - save record
                     const politician = new PoliticianModel(senator);
@@ -113,20 +113,23 @@ for(let i = 0; i<zipRanges.length; i+=1)
                         .split('\n');
                     let name = representativeData1[0].trim();
                     let party = representativeData1[1].trim();
-                    //console.log(name, ", ", party)
                     let representativeData2 = dataHtml
                         .querySelector('.repdistrict')
                         .querySelector('a').getAttribute('href');
                     let website = representativeData2;
-                    //console.log(website);
+                    let representativeData3 = dataHtml
+                        .querySelector('.repdistrict')
+                        .querySelector('img').getAttribute('src');
+                    let image = 'https://ziplook.house.gov' + representativeData3;
                     if(namePrev!==name)
                     {
                         let representativeData = {
                             name: name,
-                            position: 'House Representative',
+                            position: 'Representative',
                             party: party,
                             state: zipRanges[i].state,
-                            website: website,
+                            website: {uri: website},
+                            imageUrl: {uri: image},
                         }
                         let representative = new PoliticianModel(representativeData);
                         await representative.save(function (err, dbRes) {
@@ -142,7 +145,6 @@ for(let i = 0; i<zipRanges.length; i+=1)
                     zip+=100;
                 }
             }).catch(function(error) {
-                //console.log(error);
                 zip+=100;
             });
     }
