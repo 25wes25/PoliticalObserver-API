@@ -6,11 +6,13 @@ const IssueModel = require('../models/issue');
 const UserIssueModel = require('../models/userissue');
 const IssueDataModel = require('../models/issueData');
 
+router.post('/issues/', createIssue);
 router.get('/issues', getAllIssues);
 router.get('/issues/:issueId/userId/:userId', getIssueById);
 router.get('/issues/:userId', getUsersIssues);
 router.get('/issues/filter/:userId/:keyword', getIssueByKeyword);
-router.post('/issues/', createIssue);
+router.get('/issues/search/:search', getIssuesBySearch);
+router.get('/issues/:userId/search/:search', getUsersIssuesBySearch);
 
 // http status codes
 const statusOK = 200;
@@ -136,7 +138,34 @@ async function createIssue(request, response, next) {
             if (err) console.error(err);
         });
     });
+}
 
+async function getIssuesBySearch(request, response, next) {
+    try {
+        let issues = await IssueModel.find({title: {$regex: request.params.search, $options: "i"}}).exec();
+        response.statusCode = statusOK;
+        response.send(issues);
+    } catch (e) {
+        next(e);
+    }
+}
+
+async function getUsersIssuesBySearch(request, response, next) {
+    try {
+        let userIssues = await UserIssueModel.find({userId: String(request.params.userId).toLowerCase()}).exec();
+        let issues = [];
+        for(let i = 0; i < userIssues.length; i++)
+        {
+            let issuesResult = await IssueModel.find({_id: userIssues[i].issueId, title: {$regex: request.params.search, $options: "i"}}).exec()
+            if (issuesResult.length > 0) {
+                issues.push(issuesResult[0]);
+            }
+        }
+        response.statusCode = statusOK;
+        response.send(issues);
+    } catch (error) {
+        next(error);
+    }
 }
 
 module.exports = router;
