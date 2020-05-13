@@ -8,6 +8,7 @@ router.post('/politicians', createPolitician);
 router.put('/politicians/:id', modifyPolitician);
 router.get('/politicians', getAllPoliticians);
 router.get('/politicians/id/:id', getPoliticianById);
+router.get('/politicians/search/:search', getPoliticiansBySearch);
 
 // http status codes
 const statusOK = 200;
@@ -61,6 +62,16 @@ async function getPoliticianById(request, response, next) {
             response.statusCode = statusError;
             next("No politician found for get politician by id");
         }
+    } catch (e) {
+        next(e);
+    }
+}
+
+async function getPoliticiansBySearch(request, response, next) {
+    try {
+        let politicians = await PoliticianModel.find({name: {$regex: request.params.search, $options: "i"}}).exec();
+        response.statusCode = statusOK;
+        response.send(politicians);
     } catch (e) {
         next(e);
     }
