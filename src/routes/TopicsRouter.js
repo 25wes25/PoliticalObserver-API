@@ -8,6 +8,7 @@ router.post('/topics', createTopic);
 router.put('/topics/:id', modifyTopic);
 router.get('/topics', getAllTopics);
 router.get('/topics/id/:id', getTopicById);
+router.get('/topics/search/:search', getTopicsBySearch);
 
 // http status codes
 const statusOK = 200;
@@ -61,6 +62,16 @@ async function getTopicById(request, response, next) {
             response.statusCode = statusError;
             next("No topic found for get topic by id");
         }
+    } catch (e) {
+        next(e);
+    }
+}
+
+async function getTopicsBySearch(request, response, next) {
+    try {
+        let topics = await TopicModel.find({title: {$regex: request.params.search, $options: "i"}}).exec();
+        response.statusCode = statusOK;
+        response.send(topics);
     } catch (e) {
         next(e);
     }

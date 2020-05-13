@@ -6,11 +6,12 @@ const IssueModel = require('../models/issue');
 const UserIssueModel = require('../models/userissue');
 const IssueDataModel = require('../models/issueData');
 
+router.post('/issues/', createIssue);
 router.get('/issues', getAllIssues);
 router.get('/issues/:issueId/userId/:userId', getIssueById);
 router.get('/issues/:userId', getUsersIssues);
 router.get('/issues/filter/:userId/:keyword', getIssueByKeyword);
-router.post('/issues/', createIssue);
+router.get('/issues/search/:search', getIssuesBySearch);
 
 // http status codes
 const statusOK = 200;
@@ -136,7 +137,16 @@ async function createIssue(request, response, next) {
             if (err) console.error(err);
         });
     });
+}
 
+async function getIssuesBySearch(request, response, next) {
+    try {
+        let issues = await IssueModel.find({title: {$regex: request.params.search, $options: "i"}}).exec();
+        response.statusCode = statusOK;
+        response.send(issues);
+    } catch (e) {
+        next(e);
+    }
 }
 
 module.exports = router;
